@@ -1,0 +1,89 @@
+/**
+ * Main stylesheet for Adventure Idle game
+ */
+
+:root {
+    --color-dark-bg: #1f2937;
+    --color-card-bg: #374151;
+    --color-accent: #10b981;
+    --color-text-primary: #f3f4f6;
+    --color-log-bg: #111827;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--color-dark-bg);
+    color: var(--color-text-primary);
+    overflow: hidden;
+}
+
+/* Custom scrollbar for log and panels */
+.custom-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-accent) var(--color-log-bg);
+}
+
+.custom-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+    background: var(--color-log-bg);
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+    background-color: var(--color-accent);
+    border-radius: 20px;
+}
+
+/* Style for the collapsible summary icon */
+details summary {
+    list-style: none;
+}
+
+details summary::-webkit-details-marker {
+    display: none;
+}
+
+details summary:before {
+    content: "▶";
+    display: inline-block;
+    margin-right: 0.5rem;
+    transition: transform 0.2s;
+}
+
+details[open] summary:before {
+    content: "▼";
+    transform: rotate(0deg);
+}
+
+/* Fixed height layout */
+.game-container {
+    height: calc(100vh - 2rem);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
+.main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 1rem;
+    overflow: hidden;
+}
+
+.panel {
+    overflow-y: auto;
+    height: 100%;
+}
+
+@media (max-width: 1024px) {
+    .main-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .main-grid {
+        grid-template-columns: 1fr;
+    }
+}
