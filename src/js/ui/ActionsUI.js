@@ -21,9 +21,11 @@ class ActionsUI {
     render() {
         this.renderWoodcutting();
         this.renderMining();
+        this.renderFishing();
         this.renderFiremaking();
         this.renderSmithing();
         this.renderFletching();
+        this.renderCooking();
         this.renderCombat();
         this.renderStopButton();
     }
@@ -56,6 +58,24 @@ class ActionsUI {
                 action.id,
                 action.name,
                 'Mining',
+                action.levelReq,
+                action.item,
+                action.xp
+            );
+            panel.appendChild(button);
+        });
+    }
+
+    renderFishing() {
+        const panel = document.getElementById(this.actionPanels.fishing);
+        if (!panel) return;
+
+        panel.innerHTML = '';
+        ACTIONS.fishing.forEach(action => {
+            const button = this.createGatheringButton(
+                action.id,
+                action.name,
+                'Fishing',
                 action.levelReq,
                 action.item,
                 action.xp
@@ -113,6 +133,27 @@ class ActionsUI {
                 action.id,
                 action.name,
                 'Fletching',
+                action.levelReq,
+                action.cost,
+                action.costAmount,
+                action.produces,
+                action.producesAmount,
+                action.xp
+            );
+            panel.appendChild(button);
+        });
+    }
+
+    renderCooking() {
+        const panel = document.getElementById(this.actionPanels.cooking);
+        if (!panel) return;
+
+        panel.innerHTML = '';
+        ACTIONS.cooking.forEach(action => {
+            const button = this.createProductionButton(
+                action.id,
+                action.name,
+                'Cooking',
                 action.levelReq,
                 action.cost,
                 action.costAmount,

@@ -19,9 +19,11 @@ class UIManager {
         actionsUI.initialize({
             woodcutting: 'woodcutting-actions',
             mining: 'mining-actions',
+            fishing: 'fishing-actions',
             firemaking: 'firemaking-actions',
             smithing: 'smithing-actions',
             fletching: 'fletching-actions',
+            cooking: 'cooking-actions',
             combat: 'combat-actions',
         }, 'stop-action-container');
 
@@ -69,6 +71,10 @@ class UIManager {
         window.addEventListener('enemyAttack', (e) => this.handleEnemyAttack(e));
         window.addEventListener('combatVictory', (e) => this.handleCombatVictory(e));
         window.addEventListener('combatDefeat', (e) => this.handleCombatDefeat(e));
+
+        // Food events
+        window.addEventListener('foodEaten', (e) => this.handleFoodEaten(e));
+        window.addEventListener('eatError', (e) => this.handleEatError(e));
     }
 
     // Event handlers
@@ -191,6 +197,18 @@ class UIManager {
         logUI.log(`You respawn with full health.`, 'info');
         skillsUI.render();
         actionsUI.render();
+    }
+
+    handleFoodEaten(e) {
+        const { itemName, healAmount, newHP, maxHP } = e.detail;
+        logUI.log(`🍴 You ate ${itemName} and restored ${healAmount} HP! (${newHP}/${maxHP})`, 'success');
+        skillsUI.render();
+        inventoryUI.render();
+    }
+
+    handleEatError(e) {
+        const { message } = e.detail;
+        logUI.log(message, 'error');
     }
 }
 

@@ -96,6 +96,12 @@ class GameState {
             RunePlatelegs: 0,
             RunePlatebody: 0,
 
+            // Fishing
+            RawShrimp: 0,
+
+            // Food
+            Shrimp: 0,
+
             // Combat drops
             Bones: 0,
             Coins: 0,

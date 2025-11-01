@@ -5,7 +5,8 @@
 
 import { inventorySystem } from '../systems/InventorySystem.js';
 import { equipmentSystem } from '../systems/EquipmentSystem.js';
-import { getItemEmoji, getItemSlot } from '../data/GameData.js';
+import { foodSystem } from '../systems/FoodSystem.js';
+import { getItemEmoji, getItemSlot, FOOD_DATA } from '../data/GameData.js';
 
 class InventoryUI {
     constructor() {
@@ -97,6 +98,18 @@ class InventoryUI {
                 equipmentSystem.equipItem(itemName);
             };
             itemDiv.appendChild(equipButton);
+        }
+
+        // Add eat button if item is food
+        if (FOOD_DATA[itemName]) {
+            const eatButton = document.createElement('button');
+            const healAmount = FOOD_DATA[itemName].healsHP;
+            eatButton.textContent = `Eat (${healAmount} HP)`;
+            eatButton.className = 'mt-1 text-xs bg-green-500 hover:bg-green-600 text-white py-0.5 px-2 rounded-md transition-colors';
+            eatButton.onclick = () => {
+                foodSystem.eatFood(itemName);
+            };
+            itemDiv.appendChild(eatButton);
         }
 
         return itemDiv;

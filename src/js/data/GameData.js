@@ -12,8 +12,8 @@ export const GAME_CONFIG = {
 
 export const SKILLS = {
     COMBAT: ['Attack', 'Strength', 'Defense', 'Hitpoints'],
-    GATHERING: ['Woodcutting', 'Mining'],
-    PRODUCTION: ['Smithing', 'Fletching', 'Firemaking'],
+    GATHERING: ['Woodcutting', 'Mining', 'Fishing'],
+    PRODUCTION: ['Smithing', 'Fletching', 'Firemaking', 'Cooking'],
 };
 
 export const ALL_SKILLS = [
@@ -116,6 +116,12 @@ export const ITEM_EMOJIS = {
     YewArrowShafts: '🏹',
     MagicArrowShafts: '🏹',
 
+    // Fishing
+    RawShrimp: '🦐',
+
+    // Food
+    Shrimp: '🍤',
+
     // Armor - dynamically handled based on name
 };
 
@@ -163,6 +169,13 @@ export function getItemSlot(itemName) {
     if (itemName.includes('Dagger')) return 'Weapon';
     return null;
 }
+
+/**
+ * Food definitions - items that can be consumed to restore HP
+ */
+export const FOOD_DATA = {
+    Shrimp: { healsHP: 3 },
+};
 
 /**
  * Action definitions for all skills
@@ -230,6 +243,12 @@ export const ACTIONS = {
         { id: 'fletch-maple-shafts', name: 'Fletch Maple Shafts', levelReq: 30, cost: 'MapleLogs', costAmount: 1, produces: 'MapleArrowShafts', producesAmount: 10, xp: 80 },
         { id: 'fletch-yew-shafts', name: 'Fletch Yew Shafts', levelReq: 40, cost: 'YewLogs', costAmount: 1, produces: 'YewArrowShafts', producesAmount: 10, xp: 100 },
         { id: 'fletch-magic-shafts', name: 'Fletch Magic Shafts', levelReq: 50, cost: 'MagicLogs', costAmount: 1, produces: 'MagicArrowShafts', producesAmount: 10, xp: 120 },
+    ],
+    fishing: [
+        { id: 'catch-shrimp', name: 'Catch Raw Shrimp', levelReq: 1, item: 'RawShrimp', xp: 20 },
+    ],
+    cooking: [
+        { id: 'cook-shrimp', name: 'Cook Shrimp', levelReq: 1, cost: 'RawShrimp', costAmount: 1, produces: 'Shrimp', producesAmount: 1, xp: 30 },
     ],
     combat: [
         { id: 'fight-goblin', name: 'Fight Goblin', levelReq: 1, enemy: 'Goblin' },
