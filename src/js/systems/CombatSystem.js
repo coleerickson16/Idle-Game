@@ -129,6 +129,10 @@ class CombatSystem {
     handleVictory(enemy) {
         const loot = this.rollLoot(enemy.name);
 
+        // Award Hitpoints XP based on enemy's max HP (2x enemy HP)
+        const hitpointsXp = enemy.maxHealth * 2;
+        skillSystem.gainXp('Hitpoints', hitpointsXp);
+
         // Restore health
         const maxHp = skillSystem.getMaxHealth();
         gameState.setCurrentHealth(maxHp);

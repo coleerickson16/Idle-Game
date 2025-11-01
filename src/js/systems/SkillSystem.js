@@ -26,9 +26,10 @@ class SkillSystem {
 
     /**
      * Gets the player's maximum health based on Hitpoints level
+     * Level 1 = 10 HP, each level adds +1 HP
      */
     getMaxHealth() {
-        return gameState.getLevel('Hitpoints') * 10;
+        return 9 + gameState.getLevel('Hitpoints');
     }
 
     /**
