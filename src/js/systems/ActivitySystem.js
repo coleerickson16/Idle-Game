@@ -127,10 +127,14 @@ class ActivitySystem {
             // Check if enemy defeated
             const checkResult = combatSystem.checkCombatEnd(enemy);
             if (checkResult.ended) {
+                clearInterval(interval);
+                gameState.clearActivity();
+
                 if (checkResult.result === 'victory') {
                     combatSystem.handleVictory(enemy);
                 }
-                this.stopActivity(false);
+
+                this.dispatchActivityStop('Combat');
                 return;
             }
 
@@ -140,8 +144,10 @@ class ActivitySystem {
             // Check if player defeated
             const playerCheckResult = combatSystem.checkCombatEnd(enemy);
             if (playerCheckResult.ended && playerCheckResult.result === 'defeat') {
+                clearInterval(interval);
+                gameState.clearActivity();
                 combatSystem.handleDefeat(enemy);
-                this.stopActivity(false);
+                this.dispatchActivityStop('Combat');
                 return;
             }
 
