@@ -116,11 +116,25 @@ export const ITEM_EMOJIS = {
     YewArrowShafts: '🏹',
     MagicArrowShafts: '🏹',
 
-    // Fishing
+    // Fishing - Raw Fish
     RawShrimp: '🦐',
+    RawTrout: '🐟',
+    RawSalmon: '🐟',
+    RawTuna: '🐟',
+    RawLobster: '🦞',
+    RawSwordfish: '🗡️🐟',
+    RawShark: '🦈',
+    RawAnglerfish: '🐡',
 
-    // Food
+    // Food - Cooked Fish
     Shrimp: '🍤',
+    Trout: '🐟',
+    Salmon: '🍣',
+    Tuna: '🍣',
+    Lobster: '🦞',
+    Swordfish: '🐟',
+    Shark: '🦈',
+    Anglerfish: '🐡',
 
     // Armor - dynamically handled based on name
 };
@@ -175,6 +189,13 @@ export function getItemSlot(itemName) {
  */
 export const FOOD_DATA = {
     Shrimp: { healsHP: 3 },
+    Trout: { healsHP: 4 },
+    Salmon: { healsHP: 5 },
+    Tuna: { healsHP: 6 },
+    Lobster: { healsHP: 7 },
+    Swordfish: { healsHP: 8 },
+    Shark: { healsHP: 9 },
+    Anglerfish: { healsHP: 10 },
 };
 
 /**
@@ -246,9 +267,23 @@ export const ACTIONS = {
     ],
     fishing: [
         { id: 'catch-shrimp', name: 'Catch Raw Shrimp', levelReq: 1, item: 'RawShrimp', xp: 20 },
+        { id: 'catch-trout', name: 'Catch Raw Trout', levelReq: 5, item: 'RawTrout', xp: 30 },
+        { id: 'catch-salmon', name: 'Catch Raw Salmon', levelReq: 10, item: 'RawSalmon', xp: 40 },
+        { id: 'catch-tuna', name: 'Catch Raw Tuna', levelReq: 15, item: 'RawTuna', xp: 50 },
+        { id: 'catch-lobster', name: 'Catch Raw Lobster', levelReq: 20, item: 'RawLobster', xp: 60 },
+        { id: 'catch-swordfish', name: 'Catch Raw Swordfish', levelReq: 25, item: 'RawSwordfish', xp: 70 },
+        { id: 'catch-shark', name: 'Catch Raw Shark', levelReq: 30, item: 'RawShark', xp: 80 },
+        { id: 'catch-anglerfish', name: 'Catch Raw Anglerfish', levelReq: 35, item: 'RawAnglerfish', xp: 90 },
     ],
     cooking: [
         { id: 'cook-shrimp', name: 'Cook Shrimp', levelReq: 1, cost: 'RawShrimp', costAmount: 1, produces: 'Shrimp', producesAmount: 1, xp: 30 },
+        { id: 'cook-trout', name: 'Cook Trout', levelReq: 5, cost: 'RawTrout', costAmount: 1, produces: 'Trout', producesAmount: 1, xp: 40 },
+        { id: 'cook-salmon', name: 'Cook Salmon', levelReq: 10, cost: 'RawSalmon', costAmount: 1, produces: 'Salmon', producesAmount: 1, xp: 50 },
+        { id: 'cook-tuna', name: 'Cook Tuna', levelReq: 15, cost: 'RawTuna', costAmount: 1, produces: 'Tuna', producesAmount: 1, xp: 60 },
+        { id: 'cook-lobster', name: 'Cook Lobster', levelReq: 20, cost: 'RawLobster', costAmount: 1, produces: 'Lobster', producesAmount: 1, xp: 70 },
+        { id: 'cook-swordfish', name: 'Cook Swordfish', levelReq: 25, cost: 'RawSwordfish', costAmount: 1, produces: 'Swordfish', producesAmount: 1, xp: 80 },
+        { id: 'cook-shark', name: 'Cook Shark', levelReq: 30, cost: 'RawShark', costAmount: 1, produces: 'Shark', producesAmount: 1, xp: 90 },
+        { id: 'cook-anglerfish', name: 'Cook Anglerfish', levelReq: 35, cost: 'RawAnglerfish', costAmount: 1, produces: 'Anglerfish', producesAmount: 1, xp: 100 },
     ],
     combat: [
         { id: 'fight-goblin', name: 'Fight Goblin', levelReq: 1, enemy: 'Goblin' },

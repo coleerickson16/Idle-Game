@@ -96,11 +96,25 @@ class GameState {
             RunePlatelegs: 0,
             RunePlatebody: 0,
 
-            // Fishing
+            // Fishing - Raw Fish
             RawShrimp: 0,
+            RawTrout: 0,
+            RawSalmon: 0,
+            RawTuna: 0,
+            RawLobster: 0,
+            RawSwordfish: 0,
+            RawShark: 0,
+            RawAnglerfish: 0,
 
-            // Food
+            // Food - Cooked Fish
             Shrimp: 0,
+            Trout: 0,
+            Salmon: 0,
+            Tuna: 0,
+            Lobster: 0,
+            Swordfish: 0,
+            Shark: 0,
+            Anglerfish: 0,
 
             // Combat drops
             Bones: 0,
