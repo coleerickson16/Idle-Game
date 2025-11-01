@@ -181,7 +181,10 @@ class ActionsUI {
     }
 
     renderStopButton() {
-        if (!this.stopActionContainer) return;
+        if (!this.stopActionContainer) {
+            console.error('Stop action container not found!');
+            return;
+        }
 
         this.stopActionContainer.innerHTML = '';
 
@@ -190,7 +193,9 @@ class ActionsUI {
             stopBtn.textContent = 'Stop Activity';
             stopBtn.className = `w-full text-white py-2 px-2 rounded-lg shadow-md font-semibold text-xs transition-all duration-200
                                 bg-yellow-600 hover:bg-yellow-700 active:bg-yellow-800`;
-            stopBtn.onclick = () => activitySystem.stopActivity(true);
+            stopBtn.onclick = () => {
+                activitySystem.stopActivity(true);
+            };
 
             this.stopActionContainer.appendChild(stopBtn);
         }

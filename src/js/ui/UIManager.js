@@ -135,11 +135,15 @@ class UIManager {
     handleGatheringTick(e) {
         const { skill, itemName, xpGain } = e.detail;
         logUI.log(`You successfully gathered 1x ${itemName}. (+${xpGain} ${skill} XP)`, 'item');
+        // Ensure stop button stays visible during activity
+        actionsUI.renderStopButton();
     }
 
     handleProductionTick(e) {
         const { skill, itemName, costItem, costAmount, producedItem, producedAmount, xpGain } = e.detail;
         logUI.log(`You successfully made ${producedAmount}x ${itemName}. (-${costAmount} ${costItem}, +${xpGain} ${skill} XP)`, 'item');
+        // Ensure stop button stays visible during activity
+        actionsUI.renderStopButton();
     }
 
     handleFiremakingSuccess(e) {
