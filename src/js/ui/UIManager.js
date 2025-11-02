@@ -96,7 +96,13 @@ class UIManager {
         window.addEventListener('travel-error', (e) => this.handleTravelError(e));
 
         // Hotbar events
-        window.addEventListener('hotbar-update', () => hotbarUI.render());
+        window.addEventListener('hotbar-update', () => {
+            hotbarUI.render();
+            // Also update combat UI hotbar if combat is active
+            if (combatUI.getCurrentEnemy()) {
+                combatUI.render();
+            }
+        });
         window.addEventListener('hotbar-error', (e) => logUI.log(e.detail.message, 'error'));
     }
 
@@ -175,6 +181,10 @@ class UIManager {
     handleInventoryUpdate() {
         inventoryUI.render();
         hotbarUI.render();
+        // Also update combat UI hotbar if combat is active
+        if (combatUI.getCurrentEnemy()) {
+            combatUI.render();
+        }
     }
 
     handleItemEquipped(e) {
@@ -280,6 +290,12 @@ class UIManager {
 
     handleCombatVictory(e) {
         const { enemy, loot } = e.detail;
+
+        // Get combat stats before hiding panel
+        const stats = combatUI.getCombatStats();
+        const avgDamageDealt = stats.hitsLanded > 0 ? (stats.totalDamageDealt / stats.hitsLanded).toFixed(1) : 0;
+        const avgDamageTaken = stats.hitsTaken > 0 ? (stats.totalDamageTaken / stats.hitsTaken).toFixed(1) : 0;
+
         logUI.log(`⚔️ You defeated the ${enemy.name}!`, 'success');
 
         loot.forEach(({ item, amount, rarity }) => {
@@ -290,7 +306,8 @@ class UIManager {
             }
         });
 
-        const maxHp = e.detail.enemy.maxHealth; // Use from detail if needed
+        // Log combat summary
+        logUI.log(`📊 Combat Summary: ${stats.totalDamageDealt} damage dealt (${avgDamageDealt} avg), ${stats.totalDamageTaken} taken (${avgDamageTaken} avg), ${stats.turnCount} turns`, 'info');
         logUI.log(`Your health has been restored.`, 'success');
 
         // Hide combat panel after a short delay
@@ -305,7 +322,16 @@ class UIManager {
 
     handleCombatDefeat(e) {
         const { enemy } = e.detail;
+
+        // Get combat stats before hiding panel
+        const stats = combatUI.getCombatStats();
+        const avgDamageDealt = stats.hitsLanded > 0 ? (stats.totalDamageDealt / stats.hitsLanded).toFixed(1) : 0;
+        const avgDamageTaken = stats.hitsTaken > 0 ? (stats.totalDamageTaken / stats.hitsTaken).toFixed(1) : 0;
+
         logUI.log(`💀 You have been defeated by the ${enemy.name}.`, 'error');
+
+        // Log combat summary
+        logUI.log(`📊 Combat Summary: ${stats.totalDamageDealt} damage dealt (${avgDamageDealt} avg), ${stats.totalDamageTaken} taken (${avgDamageTaken} avg), ${stats.turnCount} turns`, 'info');
         logUI.log(`You respawn with full health.`, 'info');
 
         // Hide combat panel after a short delay
@@ -322,6 +348,10 @@ class UIManager {
         logUI.log(`🍴 You ate ${itemName} and restored ${healAmount} HP! (${newHP}/${maxHP})`, 'success');
         skillsUI.render();
         inventoryUI.render();
+        // Also update combat UI if combat is active
+        if (combatUI.getCurrentEnemy()) {
+            combatUI.render();
+        }
     }
 
     handleEatError(e) {
@@ -343,6 +373,8 @@ class UIManager {
 
     /**
      * Create floating damage number animation
+     * Player damage appears on right side (enemy taking damage)
+     * Enemy damage appears on left side (player taking damage)
      */
     createFloatingDamage(damage, isPlayerDamage) {
         const container = document.getElementById('floating-damage-container');
@@ -350,18 +382,31 @@ class UIManager {
 
         const damageEl = document.createElement('div');
         damageEl.className = `floating-damage ${isPlayerDamage ? 'damage-dealt' : 'damage-taken'}`;
-        damageEl.textContent = isPlayerDamage ? `-${damage}` : `+${damage}`;
+        damageEl.textContent = isPlayerDamage ? `-${damage}` : `-${damage}`;
 
-        // Position it in the center of the screen
+        // Position consistently based on who dealt damage
         const screenWidth = window.innerWidth;
         const screenHeight = window.innerHeight;
 
-        // Random position near center
-        const offsetX = (Math.random() - 0.5) * 200;
-        const offsetY = (Math.random() - 0.5) * 100;
+        // Consistent positioning: player damage on right, enemy damage on left
+        let baseX, baseY;
 
-        damageEl.style.left = `${screenWidth / 2 + offsetX}px`;
-        damageEl.style.top = `${screenHeight / 2 + offsetY}px`;
+        if (isPlayerDamage) {
+            // Player damage dealt - appears on right side (enemy side)
+            baseX = screenWidth * 0.65;
+        } else {
+            // Enemy damage dealt - appears on left side (player side)
+            baseX = screenWidth * 0.35;
+        }
+
+        baseY = screenHeight * 0.4;
+
+        // Small random variance for stacking
+        const offsetX = (Math.random() - 0.5) * 60;
+        const offsetY = (Math.random() - 0.5) * 40;
+
+        damageEl.style.left = `${baseX + offsetX}px`;
+        damageEl.style.top = `${baseY + offsetY}px`;
 
         container.appendChild(damageEl);
 

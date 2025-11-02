@@ -5,7 +5,13 @@
 
 import { gameState } from '../core/GameState.js';
 import { skillSystem } from '../systems/SkillSystem.js';
-import { ENEMY_TEMPLATES } from '../data/GameData.js';
+import { hotbarSystem } from '../systems/HotbarSystem.js';
+import { inventorySystem } from '../systems/InventorySystem.js';
+import { ITEMS } from '../data/GameData.js';
+
+function getItemEmoji(itemName) {
+    return ITEMS[itemName]?.emoji || '❓';
+}
 
 class CombatUI {
     constructor() {
@@ -164,28 +170,11 @@ class CombatUI {
                     </div>
                 </div>
 
-                <!-- Combat Stats Summary -->
-                <div class="combat-stats-summary">
-                    <h4 class="text-sm font-semibold text-gray-300 mb-2">Combat Statistics</h4>
-                    <div class="stats-grid">
-                        <div class="stat-box stat-box-green">
-                            <div class="stat-box-label">Damage Dealt</div>
-                            <div class="stat-box-value">${this.combatStats.totalDamageDealt}</div>
-                            <div class="stat-box-sub">${avgDamageDealt} avg</div>
-                        </div>
-                        <div class="stat-box stat-box-red">
-                            <div class="stat-box-label">Damage Taken</div>
-                            <div class="stat-box-value">${this.combatStats.totalDamageTaken}</div>
-                            <div class="stat-box-sub">${avgDamageTaken} avg</div>
-                        </div>
-                        <div class="stat-box stat-box-blue">
-                            <div class="stat-box-label">Hits Landed</div>
-                            <div class="stat-box-value">${this.combatStats.hitsLanded}</div>
-                        </div>
-                        <div class="stat-box stat-box-purple">
-                            <div class="stat-box-label">Turns</div>
-                            <div class="stat-box-value">${this.combatStats.turnCount}</div>
-                        </div>
+                <!-- Hotbar -->
+                <div class="combat-hotbar-container">
+                    <div class="text-xs text-gray-400 mb-1 text-center">Quick Slots (Press 1-9)</div>
+                    <div id="combat-hotbar" class="hotbar">
+                        ${this.renderHotbar()}
                     </div>
                 </div>
             </div>
@@ -196,6 +185,62 @@ class CombatUI {
         if (closeBtn) {
             closeBtn.addEventListener('click', () => this.hideCombatPanel());
         }
+
+        // Add hotbar click listeners
+        this.setupHotbarListeners();
+    }
+
+    /**
+     * Render hotbar HTML
+     */
+    renderHotbar() {
+        const hotbar = hotbarSystem.getHotbar();
+        let html = '';
+
+        hotbar.forEach((itemName, index) => {
+            const keyLabel = index + 1;
+            let slotContent = '';
+
+            if (itemName) {
+                const count = inventorySystem.getItemCount(itemName);
+                const emoji = getItemEmoji(itemName);
+
+                if (count > 0) {
+                    slotContent = `
+                        <div class="hotbar-item" data-slot="${index}">
+                            <div style="font-size: 1.5rem;">${emoji}</div>
+                            <div class="hotbar-count">${count}</div>
+                        </div>
+                    `;
+                }
+            }
+
+            if (!slotContent) {
+                slotContent = '<div class="hotbar-empty">+</div>';
+            }
+
+            html += `
+                <div class="hotbar-slot" data-slot="${index}">
+                    <div class="hotbar-key">${keyLabel}</div>
+                    ${slotContent}
+                </div>
+            `;
+        });
+
+        return html;
+    }
+
+    /**
+     * Setup hotbar click listeners
+     */
+    setupHotbarListeners() {
+        const hotbarItems = document.querySelectorAll('#combat-hotbar .hotbar-item');
+        hotbarItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const slotIndex = parseInt(item.dataset.slot);
+                hotbarSystem.useSlot(slotIndex);
+            });
+        });
     }
 
     /**
@@ -225,6 +270,13 @@ class CombatUI {
      */
     getCurrentEnemy() {
         return this.currentEnemy;
+    }
+
+    /**
+     * Get combat statistics for final summary
+     */
+    getCombatStats() {
+        return { ...this.combatStats };
     }
 }
 
