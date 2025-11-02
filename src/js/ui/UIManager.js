@@ -35,6 +35,7 @@ class UIManager {
 
         // Set up event listeners
         this.setupEventListeners();
+        this.setupModalListeners();
 
         // Initial render
         this.renderAll();
@@ -86,6 +87,58 @@ class UIManager {
         // Location events
         window.addEventListener('location-change', (e) => this.handleLocationChange(e));
         window.addEventListener('travel-error', (e) => this.handleTravelError(e));
+    }
+
+    setupModalListeners() {
+        // Inventory modal
+        const btnOpenInventory = document.getElementById('btn-open-inventory');
+        const inventoryModal = document.getElementById('inventory-modal');
+        const closeInventoryModal = document.getElementById('close-inventory-modal');
+        const inventoryOverlay = inventoryModal?.querySelector('.modal-overlay');
+
+        if (btnOpenInventory && inventoryModal) {
+            btnOpenInventory.addEventListener('click', () => {
+                inventoryModal.classList.remove('hidden');
+                inventoryUI.render();
+            });
+
+            closeInventoryModal?.addEventListener('click', () => {
+                inventoryModal.classList.add('hidden');
+            });
+
+            inventoryOverlay?.addEventListener('click', () => {
+                inventoryModal.classList.add('hidden');
+            });
+        }
+
+        // Equipment modal
+        const btnOpenEquipment = document.getElementById('btn-open-equipment');
+        const equipmentModal = document.getElementById('equipment-modal');
+        const closeEquipmentModal = document.getElementById('close-equipment-modal');
+        const equipmentOverlay = equipmentModal?.querySelector('.modal-overlay');
+
+        if (btnOpenEquipment && equipmentModal) {
+            btnOpenEquipment.addEventListener('click', () => {
+                equipmentModal.classList.remove('hidden');
+                equipmentUI.render();
+            });
+
+            closeEquipmentModal?.addEventListener('click', () => {
+                equipmentModal.classList.add('hidden');
+            });
+
+            equipmentOverlay?.addEventListener('click', () => {
+                equipmentModal.classList.add('hidden');
+            });
+        }
+
+        // Close modals with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                inventoryModal?.classList.add('hidden');
+                equipmentModal?.classList.add('hidden');
+            }
+        });
     }
 
     // Event handlers

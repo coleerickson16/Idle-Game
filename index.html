@@ -34,43 +34,28 @@
                 </div>
             </div>
 
-            <!-- 2. Inventory/Equipment Panel (COLLAPSIBLE & Scrollable) -->
+            <!-- 2. World Map Panel -->
             <div class="bg-gray-700 p-3 rounded-xl shadow-lg flex flex-col">
-                <h2 class="text-xl font-bold border-b border-gray-600 pb-2 mb-3 text-white">Loot & Gear</h2>
+                <h2 class="text-xl font-bold border-b border-gray-600 pb-2 mb-3 text-white">World Map</h2>
 
                 <!-- World Map Section -->
-                <div id="world-map" class="mb-3 p-3 bg-gray-800 rounded-lg">
+                <div id="world-map" class="flex-1 p-3 bg-gray-800 rounded-lg">
                     <!-- Map will be rendered here by JavaScript -->
                 </div>
 
-                <!-- Scrollable Container -->
-                <div class="flex-1 overflow-y-auto custom-scroll pr-1">
-                    <div class="space-y-3">
-                        <!-- Inventory Section -->
-                        <details open class="bg-gray-600 rounded-xl shadow overflow-hidden">
-                            <summary class="cursor-pointer p-2 text-sm font-semibold text-white border-l-4 border-green-500 hover:bg-gray-500 transition-colors duration-150">
-                                Inventory
-                            </summary>
-                            <div id="inventory-panel" class="p-2 space-y-2">
-                                <!-- Inventory items will be injected here by JavaScript -->
-                            </div>
-                        </details>
-
-                        <!-- Equipment Section -->
-                        <details class="bg-gray-600 rounded-xl shadow overflow-hidden">
-                            <summary class="cursor-pointer p-2 text-sm font-semibold text-white border-l-4 border-purple-500 hover:bg-gray-500 transition-colors duration-150">
-                                Equipment
-                            </summary>
-                            <div id="equipment-panel" class="p-2 grid grid-cols-2 gap-2">
-                                <!-- Equipment slots will be injected here by JavaScript -->
-                            </div>
-                        </details>
-                    </div>
+                <!-- Map Action Buttons -->
+                <div class="mt-3 grid grid-cols-2 gap-2">
+                    <button id="btn-open-inventory" class="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white py-2 px-4 rounded-lg font-semibold text-sm transition-all duration-200 shadow-md">
+                        📦 Inventory
+                    </button>
+                    <button id="btn-open-equipment" class="bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white py-2 px-4 rounded-lg font-semibold text-sm transition-all duration-200 shadow-md">
+                        ⚔️ Equipment
+                    </button>
                 </div>
             </div>
 
             <!-- 3. Actions Panel (Scrollable) -->
-            <div class="bg-gray-700 p-3 rounded-xl shadow-lg flex flex-col col-span-2">
+            <div class="bg-gray-700 p-3 rounded-xl shadow-lg flex flex-col">
                 <h2 class="text-xl font-bold border-b border-gray-600 pb-2 mb-3 text-white">Available Actions</h2>
 
                 <!-- Scrollable Actions Container -->
@@ -172,6 +157,38 @@
             <h2 class="text-lg font-bold text-gray-200 border-b border-gray-700 pb-2 mb-2">Game Log</h2>
             <div id="log" class="h-32 overflow-y-auto text-sm text-gray-400 space-y-1 custom-scroll">
                 <!-- Log messages will be injected here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventory Modal -->
+    <div id="inventory-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="text-xl font-bold text-white">📦 Inventory</h2>
+                <button id="close-inventory-modal" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="inventory-panel" class="space-y-2">
+                    <!-- Inventory items will be rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Equipment Modal -->
+    <div id="equipment-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="text-xl font-bold text-white">⚔️ Equipment</h2>
+                <button id="close-equipment-modal" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="equipment-panel" class="equipment-grid">
+                    <!-- Equipment slots will be rendered here -->
+                </div>
             </div>
         </div>
     </div>

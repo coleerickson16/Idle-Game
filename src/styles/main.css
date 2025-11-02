@@ -66,7 +66,7 @@ details[open] summary:before {
 
 .main-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 2fr 1fr;
     gap: 1rem;
     overflow: hidden;
     min-height: 0; /* Important for flex children to scroll */
@@ -246,4 +246,130 @@ details[open] summary:before {
     50% {
         transform: translateY(-4px);
     }
+}
+
+/* ==================== Modal Styles ==================== */
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    cursor: pointer;
+}
+
+.modal-content {
+    position: relative;
+    background-color: #374151;
+    border-radius: 1rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    max-width: 90%;
+    max-height: 90%;
+    width: 600px;
+    display: flex;
+    flex-direction: column;
+    z-index: 1001;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #4b5563;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.modal-close:hover {
+    color: #f3f4f6;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    max-height: calc(90vh - 100px);
+}
+
+/* ==================== Equipment Grid (Body-Shaped) ==================== */
+
+.equipment-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(5, auto);
+    gap: 0.75rem;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Equipment slot positioning */
+#equipment-panel > div:nth-child(1) { /* Helmet */
+    grid-column: 2;
+    grid-row: 1;
+}
+
+#equipment-panel > div:nth-child(2) { /* Body */
+    grid-column: 2;
+    grid-row: 3;
+}
+
+#equipment-panel > div:nth-child(3) { /* Legs */
+    grid-column: 2;
+    grid-row: 4;
+}
+
+#equipment-panel > div:nth-child(4) { /* Weapon */
+    grid-column: 1;
+    grid-row: 3;
+}
+
+#equipment-panel > div:nth-child(5) { /* Gloves */
+    grid-column: 1;
+    grid-row: 5;
+}
+
+#equipment-panel > div:nth-child(6) { /* Boots */
+    grid-column: 2;
+    grid-row: 5;
+}
+
+#equipment-panel > div:nth-child(7) { /* Cape */
+    grid-column: 3;
+    grid-row: 3;
+}
+
+#equipment-panel > div:nth-child(8) { /* Necklace */
+    grid-column: 2;
+    grid-row: 2;
+}
+
+#equipment-panel > div:nth-child(9) { /* Ring */
+    grid-column: 3;
+    grid-row: 5;
 }
