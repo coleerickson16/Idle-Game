@@ -23,6 +23,7 @@ class GameState {
             levels,
             xp,
             currentHealth: 10,
+            currentLocation: 'Town', // Starting location
             inventory: this.initializeInventory(),
             equipment: this.initializeEquipment(),
             currentActivity: {
@@ -185,6 +186,14 @@ class GameState {
 
     modifyHealth(amount) {
         this.player.currentHealth += amount;
+    }
+
+    getCurrentLocation() {
+        return this.player.currentLocation;
+    }
+
+    setCurrentLocation(locationId) {
+        this.player.currentLocation = locationId;
     }
 
     getCurrentActivity() {

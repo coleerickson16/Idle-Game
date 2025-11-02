@@ -5,6 +5,7 @@
 
 import { gameState } from '../core/GameState.js';
 import { activitySystem } from '../systems/ActivitySystem.js';
+import { locationSystem } from '../systems/LocationSystem.js';
 import { ACTIONS, ENEMY_TEMPLATES } from '../data/GameData.js';
 
 class ActionsUI {
@@ -19,15 +20,31 @@ class ActionsUI {
     }
 
     render() {
-        this.renderWoodcutting();
-        this.renderMining();
-        this.renderFishing();
-        this.renderFiremaking();
-        this.renderSmithing();
-        this.renderFletching();
-        this.renderCooking();
-        this.renderCombat();
+        // Get activities available at current location
+        const availableActivities = locationSystem.getAvailableActivities();
+
+        // Clear all panels first
+        this.clearAllPanels();
+
+        // Only render activities available at current location
+        if (availableActivities.includes('woodcutting')) this.renderWoodcutting();
+        if (availableActivities.includes('mining')) this.renderMining();
+        if (availableActivities.includes('fishing')) this.renderFishing();
+        if (availableActivities.includes('firemaking')) this.renderFiremaking();
+        if (availableActivities.includes('smithing')) this.renderSmithing();
+        if (availableActivities.includes('fletching')) this.renderFletching();
+        if (availableActivities.includes('cooking')) this.renderCooking();
+        if (availableActivities.includes('combat')) this.renderCombat();
+
         this.renderStopButton();
+    }
+
+    clearAllPanels() {
+        // Clear all action panels
+        Object.keys(this.actionPanels).forEach(panelKey => {
+            const panel = document.getElementById(this.actionPanels[panelKey]);
+            if (panel) panel.innerHTML = '';
+        });
     }
 
     renderWoodcutting() {

@@ -199,6 +199,81 @@ export const FOOD_DATA = {
 };
 
 /**
+ * Location/Zone definitions - World map structure
+ */
+export const LOCATIONS = {
+    Town: {
+        id: 'Town',
+        name: 'Town',
+        emoji: '🏘️',
+        description: 'The central hub where adventurers gather',
+        connections: ['Mine', 'Forest', 'Lake', 'Kitchen', 'Smithy'],
+        activities: [], // Town has no activities for now
+        unlocked: true, // Always accessible
+    },
+    Mine: {
+        id: 'Mine',
+        name: 'Mine',
+        emoji: '⛰️',
+        description: 'A deep mine rich with ores',
+        connections: ['Town'],
+        activities: ['mining'],
+        unlocked: true,
+        levelRequirement: null,
+    },
+    Forest: {
+        id: 'Forest',
+        name: 'Forest',
+        emoji: '🌲',
+        description: 'A lush forest full of trees',
+        connections: ['Town', 'Wilderness'],
+        activities: ['woodcutting', 'fletching', 'firemaking'],
+        unlocked: true,
+        levelRequirement: null,
+    },
+    Lake: {
+        id: 'Lake',
+        name: 'Lake',
+        emoji: '🎣',
+        description: 'A peaceful lake teeming with fish',
+        connections: ['Town'],
+        activities: ['fishing'],
+        unlocked: true,
+        levelRequirement: null,
+    },
+    Kitchen: {
+        id: 'Kitchen',
+        name: 'Kitchen',
+        emoji: '🍳',
+        description: 'A warm kitchen perfect for cooking',
+        connections: ['Town'],
+        activities: ['cooking'],
+        unlocked: true,
+        levelRequirement: null,
+    },
+    Smithy: {
+        id: 'Smithy',
+        name: 'Smithy',
+        emoji: '⚒️',
+        description: 'A hot forge for smithing equipment',
+        connections: ['Town'],
+        activities: ['smithing'],
+        unlocked: true,
+        levelRequirement: null,
+    },
+    Wilderness: {
+        id: 'Wilderness',
+        name: 'Wilderness',
+        emoji: '⚔️',
+        description: 'Dangerous lands filled with enemies',
+        connections: ['Forest'],
+        activities: ['combat'],
+        unlocked: true,
+        levelRequirement: null, // Could add combat level requirement later
+    },
+};
+
+/**
  * Action definitions for all skills
  */
 export const ACTIONS = {

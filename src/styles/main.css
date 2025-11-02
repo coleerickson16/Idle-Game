@@ -104,3 +104,126 @@ details[open] summary:before {
         grid-template-columns: 1fr;
     }
 }
+
+/* ==================== World Map Styles ==================== */
+
+/* Map title section */
+.map-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #4b5563;
+}
+
+/* Map nodes grid container */
+.map-nodes {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(3, auto);
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+}
+
+/* Base node styling */
+.map-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    position: relative;
+    min-height: 60px;
+}
+
+/* Current location - green highlight */
+.map-node-current {
+    background-color: #065f46;
+    border: 2px solid #10b981;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Connected/travelable locations - blue, clickable */
+.map-node-connected {
+    background-color: #1e3a8a;
+    border: 2px solid #3b82f6;
+    cursor: pointer;
+}
+
+.map-node-connected:hover {
+    background-color: #1e40af;
+    border-color: #60a5fa;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* Locked locations - red tint */
+.map-node-locked {
+    background-color: #4b1c1c;
+    border: 2px solid #7f1d1d;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Distant/unreachable locations - gray */
+.map-node-distant {
+    background-color: #374151;
+    border: 2px solid #4b5563;
+    opacity: 0.5;
+}
+
+/* Node emoji icon */
+.map-node-emoji {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+/* Node name text */
+.map-node-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #f3f4f6;
+    text-align: center;
+}
+
+/* Current location marker */
+.map-node-marker {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    font-size: 1.25rem;
+    animation: bounce-marker 1s ease-in-out infinite;
+}
+
+/* Map description */
+.map-description {
+    text-align: center;
+    font-size: 0.875rem;
+    color: #9ca3af;
+    font-style: italic;
+}
+
+/* Animations */
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.8);
+    }
+}
+
+@keyframes bounce-marker {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-4px);
+    }
+}

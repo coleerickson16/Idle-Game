@@ -8,9 +8,14 @@ import { skillsUI } from './SkillsUI.js';
 import { inventoryUI } from './InventoryUI.js';
 import { equipmentUI } from './EquipmentUI.js';
 import { actionsUI } from './ActionsUI.js';
+import { mapUI } from './MapUI.js';
+import { locationSystem } from '../systems/LocationSystem.js';
 
 class UIManager {
     initialize() {
+        // Initialize location system first
+        locationSystem.init();
+
         // Initialize all UI components
         logUI.initialize('log');
         skillsUI.initialize('skills-panel', 'activity-status');
@@ -26,6 +31,7 @@ class UIManager {
             cooking: 'cooking-actions',
             combat: 'combat-actions',
         }, 'stop-action-container');
+        mapUI.init();
 
         // Set up event listeners
         this.setupEventListeners();
@@ -34,10 +40,11 @@ class UIManager {
         this.renderAll();
 
         logUI.log('Game initialized. Welcome, adventurer!', 'success');
-        logUI.log('Game is ready. Start by Chopping Wood or Fighting a Goblin!', 'info');
+        logUI.log('Game is ready. Start by exploring the world!', 'info');
     }
 
     renderAll() {
+        mapUI.render();
         skillsUI.render();
         inventoryUI.render();
         actionsUI.render();
@@ -75,6 +82,10 @@ class UIManager {
         // Food events
         window.addEventListener('foodEaten', (e) => this.handleFoodEaten(e));
         window.addEventListener('eatError', (e) => this.handleEatError(e));
+
+        // Location events
+        window.addEventListener('location-change', (e) => this.handleLocationChange(e));
+        window.addEventListener('travel-error', (e) => this.handleTravelError(e));
     }
 
     // Event handlers
@@ -209,6 +220,18 @@ class UIManager {
     handleEatError(e) {
         const { message } = e.detail;
         logUI.log(message, 'error');
+    }
+
+    handleLocationChange(e) {
+        const { oldLocation, newLocation, locationData } = e.detail;
+        logUI.log(`🗺️ You travelled to ${locationData.emoji} ${locationData.name}`, 'success');
+        mapUI.render();
+        actionsUI.render();
+    }
+
+    handleTravelError(e) {
+        const { reason } = e.detail;
+        logUI.log(`Cannot travel: ${reason}`, 'error');
     }
 }
 
