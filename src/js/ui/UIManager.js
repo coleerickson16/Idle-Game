@@ -10,8 +10,10 @@ import { equipmentUI } from './EquipmentUI.js';
 import { actionsUI } from './ActionsUI.js';
 import { mapUI } from './MapUI.js';
 import { hotbarUI } from './HotbarUI.js';
+import { combatUI } from './CombatUI.js';
 import { locationSystem } from '../systems/LocationSystem.js';
 import { notificationSystem } from '../systems/NotificationSystem.js';
+import { gameState } from '../core/GameState.js';
 
 class UIManager {
     initialize() {
@@ -35,6 +37,7 @@ class UIManager {
         }, 'stop-action-container');
         mapUI.init();
         hotbarUI.init();
+        combatUI.init();
         notificationSystem.init();
 
         // Set up event listeners
@@ -199,6 +202,16 @@ class UIManager {
         const { activityName } = e.detail;
         skillsUI.updateActivityStatus(activityName);
         actionsUI.render();
+
+        // Show combat panel if starting combat
+        if (activityName.includes('Goblin')) {
+            // Get enemy from current activity
+            const currentActivity = gameState.getCurrentActivity();
+            const enemy = currentActivity.target;
+            if (enemy) {
+                combatUI.showCombatPanel(enemy);
+            }
+        }
     }
 
     handleActivityStopped(e) {
@@ -206,6 +219,11 @@ class UIManager {
         logUI.log(`Activity: ${activityName} has ceased.`, 'info');
         skillsUI.updateActivityStatus('Idle');
         actionsUI.render();
+
+        // Hide combat panel if stopping combat
+        if (activityName.includes('Goblin')) {
+            combatUI.hideCombatPanel();
+        }
     }
 
     handleActivityError(e) {
@@ -239,6 +257,11 @@ class UIManager {
     handlePlayerAttack(e) {
         const { enemy, damage } = e.detail;
         logUI.log(`You strike the ${enemy.name} for ${damage} damage.`, 'combat');
+
+        // Update combat UI
+        combatUI.recordPlayerDamage(damage);
+        this.createFloatingDamage(damage, true);
+
         actionsUI.render();
         skillsUI.render();
     }
@@ -247,6 +270,11 @@ class UIManager {
         const { enemy, damage } = e.detail;
         const currentHp = e.detail.enemy.currentHealth; // Use currentHealth from game state
         logUI.log(`The ${enemy.name} hits you back for ${damage} damage.`, 'combat');
+
+        // Update combat UI
+        combatUI.recordEnemyDamage(damage);
+        this.createFloatingDamage(damage, false);
+
         skillsUI.render();
     }
 
@@ -265,6 +293,11 @@ class UIManager {
         const maxHp = e.detail.enemy.maxHealth; // Use from detail if needed
         logUI.log(`Your health has been restored.`, 'success');
 
+        // Hide combat panel after a short delay
+        setTimeout(() => {
+            combatUI.hideCombatPanel();
+        }, 2000);
+
         skillsUI.render();
         inventoryUI.render();
         actionsUI.render();
@@ -274,6 +307,12 @@ class UIManager {
         const { enemy } = e.detail;
         logUI.log(`💀 You have been defeated by the ${enemy.name}.`, 'error');
         logUI.log(`You respawn with full health.`, 'info');
+
+        // Hide combat panel after a short delay
+        setTimeout(() => {
+            combatUI.hideCombatPanel();
+        }, 2000);
+
         skillsUI.render();
         actionsUI.render();
     }
@@ -300,6 +339,36 @@ class UIManager {
     handleTravelError(e) {
         const { reason } = e.detail;
         logUI.log(`Cannot travel: ${reason}`, 'error');
+    }
+
+    /**
+     * Create floating damage number animation
+     */
+    createFloatingDamage(damage, isPlayerDamage) {
+        const container = document.getElementById('floating-damage-container');
+        if (!container) return;
+
+        const damageEl = document.createElement('div');
+        damageEl.className = `floating-damage ${isPlayerDamage ? 'damage-dealt' : 'damage-taken'}`;
+        damageEl.textContent = isPlayerDamage ? `-${damage}` : `+${damage}`;
+
+        // Position it in the center of the screen
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+
+        // Random position near center
+        const offsetX = (Math.random() - 0.5) * 200;
+        const offsetY = (Math.random() - 0.5) * 100;
+
+        damageEl.style.left = `${screenWidth / 2 + offsetX}px`;
+        damageEl.style.top = `${screenHeight / 2 + offsetY}px`;
+
+        container.appendChild(damageEl);
+
+        // Remove after animation
+        setTimeout(() => {
+            damageEl.remove();
+        }, 2000);
     }
 }
 
