@@ -80,8 +80,21 @@ class LocationSystem {
             return { success: false, reason: 'You are already at this location.' };
         }
 
-        // Check if locations are connected
         const currentLocationData = LOCATIONS[this.currentLocation];
+        const targetLocationData = LOCATIONS[locationId];
+
+        // Check if navigating within parent/sub-location hierarchy
+        // Can travel from parent to sub-location
+        if (currentLocationData.subLocations && currentLocationData.subLocations.includes(locationId)) {
+            return { success: true };
+        }
+
+        // Can travel from sub-location back to parent
+        if (currentLocationData.parent && currentLocationData.parent === locationId) {
+            return { success: true };
+        }
+
+        // Check if locations are connected normally
         if (!currentLocationData.connections.includes(locationId)) {
             return { success: false, reason: 'You cannot travel there from here.' };
         }
@@ -131,10 +144,23 @@ class LocationSystem {
 
     /**
      * Get connected locations from current location
+     * Includes normal connections, sub-locations, and parent location
      */
     getConnectedLocations() {
         const locationData = this.getCurrentLocationData();
-        return locationData.connections || [];
+        const connected = [...(locationData.connections || [])];
+
+        // Add sub-locations if any
+        if (locationData.subLocations) {
+            connected.push(...locationData.subLocations);
+        }
+
+        // Add parent location if this is a sub-location
+        if (locationData.parent) {
+            connected.push(locationData.parent);
+        }
+
+        return connected;
     }
 
     // ==================== Event Dispatching ====================

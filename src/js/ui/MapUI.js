@@ -27,13 +27,13 @@ class MapUI {
         if (!this.mapContainer) return;
 
         const currentLocation = locationSystem.getCurrentLocation();
+        const currentLocationData = locationSystem.getCurrentLocationData();
         const connectedLocations = locationSystem.getConnectedLocations();
 
         // Clear existing map
         this.mapContainer.innerHTML = '';
 
         // Create map title
-        const currentLocationData = locationSystem.getCurrentLocationData();
         const mapTitle = document.createElement('div');
         mapTitle.className = 'map-title';
         mapTitle.innerHTML = `
@@ -42,14 +42,33 @@ class MapUI {
         `;
         this.mapContainer.appendChild(mapTitle);
 
+        // Create map visual container (holds SVG + nodes)
+        const mapVisual = document.createElement('div');
+        mapVisual.className = 'map-visual';
+        mapVisual.style.position = 'relative';
+
+        // Create SVG for connection lines
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('class', 'map-connections');
+        svg.style.position = 'absolute';
+        svg.style.top = '0';
+        svg.style.left = '0';
+        svg.style.width = '100%';
+        svg.style.height = '100%';
+        svg.style.pointerEvents = 'none';
+        svg.style.zIndex = '0';
+        mapVisual.appendChild(svg);
+
         // Create map nodes container
         const nodesContainer = document.createElement('div');
         nodesContainer.className = 'map-nodes';
+        nodesContainer.style.position = 'relative';
+        nodesContainer.style.zIndex = '1';
 
         // Define layout positions for each location
         const layout = this.getMapLayout();
 
-        // Render all locations based on layout
+        // Render all main locations (not nested ones)
         Object.keys(layout).forEach(locationId => {
             const location = LOCATIONS[locationId];
             const position = layout[locationId];
@@ -63,11 +82,42 @@ class MapUI {
             // Apply position styling
             node.style.gridColumn = position.col;
             node.style.gridRow = position.row;
+            node.setAttribute('data-location', locationId);
 
             nodesContainer.appendChild(node);
         });
 
-        this.mapContainer.appendChild(nodesContainer);
+        mapVisual.appendChild(nodesContainer);
+
+        // Draw connection lines after nodes are rendered
+        setTimeout(() => {
+            this.drawConnectionLines(svg, layout, connectedLocations, currentLocation);
+        }, 0);
+
+        this.mapContainer.appendChild(mapVisual);
+
+        // Show sub-locations if at a parent location
+        if (currentLocationData.subLocations && currentLocationData.subLocations.length > 0) {
+            const subLocationsContainer = document.createElement('div');
+            subLocationsContainer.className = 'sub-locations';
+            subLocationsContainer.innerHTML = '<div class="text-sm text-gray-400 mb-2">Buildings in Town:</div>';
+
+            const subGrid = document.createElement('div');
+            subGrid.className = 'sub-locations-grid';
+
+            currentLocationData.subLocations.forEach(subLocId => {
+                const subLoc = LOCATIONS[subLocId];
+                const subNode = this.createLocationNode(
+                    subLoc,
+                    false,
+                    true // Always clickable when shown
+                );
+                subGrid.appendChild(subNode);
+            });
+
+            subLocationsContainer.appendChild(subGrid);
+            this.mapContainer.appendChild(subLocationsContainer);
+        }
 
         // Add location description
         const description = document.createElement('div');
@@ -78,23 +128,70 @@ class MapUI {
 
     /**
      * Define the visual layout of the map
-     * Returns grid positions for each location
+     * Returns grid positions for each location (only main world locations)
      */
     getMapLayout() {
         return {
-            // Top row - connected to town
+            // Top row - outer locations
             'Mine': { row: 1, col: 1 },
-            'Forest': { row: 1, col: 2 },
-            'Lake': { row: 1, col: 3 },
-            'Kitchen': { row: 1, col: 4 },
-            'Smithy': { row: 1, col: 5 },
+            'Lake': { row: 1, col: 2 },
+            'Forest': { row: 1, col: 3 },
 
             // Middle row - Town (center)
-            'Town': { row: 2, col: 3 },
+            'Town': { row: 2, col: 2 },
 
             // Bottom row - accessible from Forest
-            'Wilderness': { row: 3, col: 2 },
+            'Wilderness': { row: 3, col: 3 },
         };
+    }
+
+    /**
+     * Draw SVG lines connecting locations
+     */
+    drawConnectionLines(svg, layout, connectedLocations, currentLocation) {
+        // Get all location node elements
+        const nodes = {};
+        Object.keys(layout).forEach(locationId => {
+            const element = document.querySelector(`[data-location="${locationId}"]`);
+            if (element) {
+                const rect = element.getBoundingClientRect();
+                const containerRect = svg.parentElement.getBoundingClientRect();
+                nodes[locationId] = {
+                    x: rect.left + rect.width / 2 - containerRect.left,
+                    y: rect.top + rect.height / 2 - containerRect.top
+                };
+            }
+        });
+
+        // Define connections to draw
+        const connections = [
+            ['Town', 'Mine'],
+            ['Town', 'Lake'],
+            ['Town', 'Forest'],
+            ['Forest', 'Wilderness'],
+        ];
+
+        // Draw lines
+        connections.forEach(([loc1, loc2]) => {
+            if (nodes[loc1] && nodes[loc2]) {
+                const isConnected = (
+                    (currentLocation === loc1 && connectedLocations.includes(loc2)) ||
+                    (currentLocation === loc2 && connectedLocations.includes(loc1))
+                );
+
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', nodes[loc1].x);
+                line.setAttribute('y1', nodes[loc1].y);
+                line.setAttribute('x2', nodes[loc2].x);
+                line.setAttribute('y2', nodes[loc2].y);
+                line.setAttribute('stroke', isConnected ? '#3b82f6' : '#4b5563');
+                line.setAttribute('stroke-width', isConnected ? '3' : '2');
+                line.setAttribute('stroke-dasharray', isConnected ? '0' : '5,5');
+                line.setAttribute('opacity', isConnected ? '0.8' : '0.3');
+
+                svg.appendChild(line);
+            }
+        });
     }
 
     /**

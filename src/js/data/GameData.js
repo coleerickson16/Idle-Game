@@ -207,8 +207,9 @@ export const LOCATIONS = {
         name: 'Town',
         emoji: '🏘️',
         description: 'The central hub where adventurers gather',
-        connections: ['Mine', 'Forest', 'Lake', 'Kitchen', 'Smithy'],
-        activities: [], // Town has no activities for now
+        connections: ['Mine', 'Forest', 'Lake'],
+        subLocations: ['Kitchen', 'Smithy'], // Buildings within town
+        activities: [], // Town itself has no activities
         unlocked: true, // Always accessible
     },
     Mine: {
@@ -220,6 +221,7 @@ export const LOCATIONS = {
         activities: ['mining'],
         unlocked: true,
         levelRequirement: null,
+        parent: null,
     },
     Forest: {
         id: 'Forest',
@@ -230,6 +232,7 @@ export const LOCATIONS = {
         activities: ['woodcutting', 'fletching', 'firemaking'],
         unlocked: true,
         levelRequirement: null,
+        parent: null,
     },
     Lake: {
         id: 'Lake',
@@ -240,26 +243,29 @@ export const LOCATIONS = {
         activities: ['fishing'],
         unlocked: true,
         levelRequirement: null,
+        parent: null,
     },
     Kitchen: {
         id: 'Kitchen',
         name: 'Kitchen',
         emoji: '🍳',
         description: 'A warm kitchen perfect for cooking',
-        connections: ['Town'],
+        connections: [], // Nested locations don't have external connections
         activities: ['cooking'],
         unlocked: true,
         levelRequirement: null,
+        parent: 'Town', // Nested in Town
     },
     Smithy: {
         id: 'Smithy',
         name: 'Smithy',
         emoji: '⚒️',
         description: 'A hot forge for smithing equipment',
-        connections: ['Town'],
+        connections: [], // Nested locations don't have external connections
         activities: ['smithing'],
         unlocked: true,
         levelRequirement: null,
+        parent: 'Town', // Nested in Town
     },
     Wilderness: {
         id: 'Wilderness',
@@ -270,6 +276,7 @@ export const LOCATIONS = {
         activities: ['combat'],
         unlocked: true,
         levelRequirement: null, // Could add combat level requirement later
+        parent: null,
     },
 };
 

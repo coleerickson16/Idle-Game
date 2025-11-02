@@ -26,6 +26,9 @@ class ActionsUI {
         // Clear all panels first
         this.clearAllPanels();
 
+        // Hide all sections by default
+        this.hideAllSections();
+
         // Only render activities available at current location
         if (availableActivities.includes('woodcutting')) this.renderWoodcutting();
         if (availableActivities.includes('mining')) this.renderMining();
@@ -47,10 +50,25 @@ class ActionsUI {
         });
     }
 
+    hideAllSections() {
+        // Hide all section containers
+        const sections = ['woodcutting', 'mining', 'fishing', 'firemaking', 'smithing', 'fletching', 'cooking', 'combat'];
+        sections.forEach(sectionName => {
+            const section = document.getElementById(`${sectionName}-section`);
+            if (section) section.style.display = 'none';
+        });
+    }
+
+    showSection(sectionName) {
+        const section = document.getElementById(`${sectionName}-section`);
+        if (section) section.style.display = 'block';
+    }
+
     renderWoodcutting() {
         const panel = document.getElementById(this.actionPanels.woodcutting);
         if (!panel) return;
 
+        this.showSection('woodcutting');
         panel.innerHTML = '';
         ACTIONS.woodcutting.forEach(action => {
             const button = this.createGatheringButton(
@@ -69,6 +87,7 @@ class ActionsUI {
         const panel = document.getElementById(this.actionPanels.mining);
         if (!panel) return;
 
+        this.showSection('mining');
         panel.innerHTML = '';
         ACTIONS.mining.forEach(action => {
             const button = this.createGatheringButton(
@@ -87,6 +106,7 @@ class ActionsUI {
         const panel = document.getElementById(this.actionPanels.fishing);
         if (!panel) return;
 
+        this.showSection('fishing');
         panel.innerHTML = '';
         ACTIONS.fishing.forEach(action => {
             const button = this.createGatheringButton(
@@ -105,6 +125,7 @@ class ActionsUI {
         const panel = document.getElementById(this.actionPanels.firemaking);
         if (!panel) return;
 
+        this.showSection('firemaking');
         panel.innerHTML = '';
         ACTIONS.firemaking.forEach(action => {
             const button = this.createFiremakingButton(
@@ -123,6 +144,7 @@ class ActionsUI {
         const panel = document.getElementById(this.actionPanels.smithing);
         if (!panel) return;
 
+        this.showSection('smithing');
         panel.innerHTML = '';
         ACTIONS.smithing.forEach(action => {
             const button = this.createProductionButton(
@@ -144,6 +166,7 @@ class ActionsUI {
         const panel = document.getElementById(this.actionPanels.fletching);
         if (!panel) return;
 
+        this.showSection('fletching');
         panel.innerHTML = '';
         ACTIONS.fletching.forEach(action => {
             const button = this.createProductionButton(
@@ -165,6 +188,7 @@ class ActionsUI {
         const panel = document.getElementById(this.actionPanels.cooking);
         if (!panel) return;
 
+        this.showSection('cooking');
         panel.innerHTML = '';
         ACTIONS.cooking.forEach(action => {
             const button = this.createProductionButton(
@@ -186,6 +210,7 @@ class ActionsUI {
         const panel = document.getElementById(this.actionPanels.combat);
         if (!panel) return;
 
+        this.showSection('combat');
         const currentEnemy = gameState.getCurrentActivity().target;
 
         if (currentEnemy) {
