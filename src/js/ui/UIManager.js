@@ -98,77 +98,57 @@ class UIManager {
     }
 
     setupModalListeners() {
-        // Inventory modal
-        const btnOpenInventory = document.getElementById('btn-open-inventory');
-        const inventoryModal = document.getElementById('inventory-modal');
-        const closeInventoryModal = document.getElementById('close-inventory-modal');
-        const inventoryOverlay = inventoryModal?.querySelector('.modal-overlay');
+        // Character panel toggles
+        const btnShowSkills = document.getElementById('btn-show-skills');
+        const btnShowInventory = document.getElementById('btn-show-inventory');
+        const btnShowEquipment = document.getElementById('btn-show-equipment');
 
-        if (btnOpenInventory && inventoryModal) {
-            btnOpenInventory.addEventListener('click', () => {
-                inventoryModal.classList.remove('hidden');
-                inventoryUI.render();
+        const skillsPanel = document.getElementById('skills-panel-inline');
+        const inventoryPanel = document.getElementById('inventory-panel-inline');
+        const equipmentPanel = document.getElementById('equipment-panel-inline');
+
+        // Helper to show a specific panel and hide others
+        const showPanel = (panelToShow) => {
+            [skillsPanel, inventoryPanel, equipmentPanel].forEach(panel => {
+                if (panel) {
+                    panel.classList.add('hidden');
+                }
             });
 
-            closeInventoryModal?.addEventListener('click', () => {
-                inventoryModal.classList.add('hidden');
-            });
+            if (panelToShow) {
+                panelToShow.classList.remove('hidden');
 
-            inventoryOverlay?.addEventListener('click', () => {
-                inventoryModal.classList.add('hidden');
-            });
-        }
-
-        // Equipment modal
-        const btnOpenEquipment = document.getElementById('btn-open-equipment');
-        const equipmentModal = document.getElementById('equipment-modal');
-        const closeEquipmentModal = document.getElementById('close-equipment-modal');
-        const equipmentOverlay = equipmentModal?.querySelector('.modal-overlay');
-
-        if (btnOpenEquipment && equipmentModal) {
-            btnOpenEquipment.addEventListener('click', () => {
-                equipmentModal.classList.remove('hidden');
-                equipmentUI.render();
-            });
-
-            closeEquipmentModal?.addEventListener('click', () => {
-                equipmentModal.classList.add('hidden');
-            });
-
-            equipmentOverlay?.addEventListener('click', () => {
-                equipmentModal.classList.add('hidden');
-            });
-        }
-
-        // Skills modal
-        const btnOpenSkills = document.getElementById('btn-open-skills');
-        const skillsModal = document.getElementById('skills-modal');
-        const closeSkillsModal = document.getElementById('close-skills-modal');
-        const skillsOverlay = skillsModal?.querySelector('.modal-overlay');
-
-        if (btnOpenSkills && skillsModal) {
-            btnOpenSkills.addEventListener('click', () => {
-                skillsModal.classList.remove('hidden');
-                skillsUI.render();
-            });
-
-            closeSkillsModal?.addEventListener('click', () => {
-                skillsModal.classList.add('hidden');
-            });
-
-            skillsOverlay?.addEventListener('click', () => {
-                skillsModal.classList.add('hidden');
-            });
-        }
-
-        // Close modals with Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                inventoryModal?.classList.add('hidden');
-                equipmentModal?.classList.add('hidden');
-                skillsModal?.classList.add('hidden');
+                // Render the appropriate UI
+                if (panelToShow === skillsPanel) {
+                    skillsUI.render();
+                } else if (panelToShow === inventoryPanel) {
+                    inventoryUI.render();
+                } else if (panelToShow === equipmentPanel) {
+                    equipmentUI.render();
+                }
             }
-        });
+        };
+
+        // Skills button
+        if (btnShowSkills) {
+            btnShowSkills.addEventListener('click', () => {
+                showPanel(skillsPanel);
+            });
+        }
+
+        // Inventory button
+        if (btnShowInventory) {
+            btnShowInventory.addEventListener('click', () => {
+                showPanel(inventoryPanel);
+            });
+        }
+
+        // Equipment button
+        if (btnShowEquipment) {
+            btnShowEquipment.addEventListener('click', () => {
+                showPanel(equipmentPanel);
+            });
+        }
     }
 
     // Event handlers

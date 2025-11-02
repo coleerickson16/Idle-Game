@@ -25,20 +25,47 @@
                 <h2 class="text-xl font-bold border-b border-gray-600 pb-2 mb-3 text-white">Character</h2>
 
                 <!-- Action Buttons Grid -->
-                <div class="grid grid-cols-1 gap-2 mb-3">
-                    <button id="btn-open-skills" class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-2 px-4 rounded-lg font-semibold text-sm transition-all duration-200 shadow-md">
-                        📊 Skills
+                <div class="grid grid-cols-3 gap-2 mb-3">
+                    <button id="btn-show-skills" class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-2 px-2 rounded-lg font-semibold text-xs transition-all duration-200 shadow-md">
+                        📊
                     </button>
-                    <button id="btn-open-inventory" class="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white py-2 px-4 rounded-lg font-semibold text-sm transition-all duration-200 shadow-md">
-                        📦 Inventory
+                    <button id="btn-show-inventory" class="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white py-2 px-2 rounded-lg font-semibold text-xs transition-all duration-200 shadow-md">
+                        📦
                     </button>
-                    <button id="btn-open-equipment" class="bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white py-2 px-4 rounded-lg font-semibold text-sm transition-all duration-200 shadow-md">
-                        ⚔️ Equipment
+                    <button id="btn-show-equipment" class="bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white py-2 px-2 rounded-lg font-semibold text-xs transition-all duration-200 shadow-md">
+                        ⚔️
                     </button>
                 </div>
 
+                <!-- Content panels (one visible at a time) -->
+                <div id="character-content" class="flex-1 overflow-y-auto custom-scroll mb-3">
+                    <!-- Skills Panel -->
+                    <div id="skills-panel-inline" class="character-panel">
+                        <h3 class="text-base font-bold mb-2 text-white">📊 Skills</h3>
+                        <div id="skills-panel" class="space-y-2">
+                            <!-- Skills will be rendered here -->
+                        </div>
+                    </div>
+
+                    <!-- Inventory Panel -->
+                    <div id="inventory-panel-inline" class="character-panel hidden">
+                        <h3 class="text-base font-bold mb-2 text-white">📦 Inventory</h3>
+                        <div id="inventory-panel" class="space-y-2">
+                            <!-- Inventory items will be rendered here -->
+                        </div>
+                    </div>
+
+                    <!-- Equipment Panel -->
+                    <div id="equipment-panel-inline" class="character-panel hidden">
+                        <h3 class="text-base font-bold mb-2 text-white">⚔️ Equipment</h3>
+                        <div id="equipment-panel" class="equipment-grid-inline">
+                            <!-- Equipment slots will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+
                 <div class="pt-3 border-t border-gray-600">
-                    <h3 class="text-lg font-semibold text-white mb-1">Current Activity</h3>
+                    <h3 class="text-base font-semibold text-white mb-1">Current Activity</h3>
                     <div id="activity-status" class="text-sm text-gray-300">
                         Idle. Ready for adventure!
                     </div>
@@ -166,54 +193,6 @@
             <h2 class="text-lg font-bold text-gray-200 border-b border-gray-700 pb-2 mb-2">Game Log</h2>
             <div id="log" class="h-32 overflow-y-auto text-sm text-gray-400 space-y-1 custom-scroll">
                 <!-- Log messages will be injected here by JavaScript -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Inventory Modal -->
-    <div id="inventory-modal" class="modal hidden">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="text-xl font-bold text-white">📦 Inventory</h2>
-                <button id="close-inventory-modal" class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div id="inventory-panel" class="space-y-2">
-                    <!-- Inventory items will be rendered here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Equipment Modal -->
-    <div id="equipment-modal" class="modal hidden">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="text-xl font-bold text-white">⚔️ Equipment</h2>
-                <button id="close-equipment-modal" class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div id="equipment-panel" class="equipment-grid">
-                    <!-- Equipment slots will be rendered here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Skills Modal -->
-    <div id="skills-modal" class="modal hidden">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="text-xl font-bold text-white">📊 Skills</h2>
-                <button id="close-skills-modal" class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div id="skills-panel" class="space-y-2">
-                    <!-- Skills will be rendered here -->
-                </div>
             </div>
         </div>
     </div>

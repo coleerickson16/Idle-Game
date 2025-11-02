@@ -137,7 +137,9 @@ details[open] summary:before {
 /* Sub-locations container */
 .sub-locations {
     margin-top: 1rem;
+    margin-bottom: 1rem;
     padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
     border-top: 1px solid #4b5563;
 }
 
@@ -319,16 +321,17 @@ details[open] summary:before {
 
 /* ==================== Equipment Grid (Body-Shaped) ==================== */
 
-.equipment-grid {
+.equipment-grid,
+.equipment-grid-inline {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(5, auto);
-    gap: 0.75rem;
+    gap: 0.5rem;
     max-width: 400px;
     margin: 0 auto;
 }
 
-/* Equipment slot positioning */
+/* Equipment slot positioning for both grid types */
 #equipment-panel > div:nth-child(1) { /* Helmet */
     grid-column: 2;
     grid-row: 1;
@@ -372,6 +375,16 @@ details[open] summary:before {
 #equipment-panel > div:nth-child(9) { /* Ring */
     grid-column: 3;
     grid-row: 5;
+}
+
+/* ==================== Character Panel Styles ==================== */
+
+.character-panel {
+    display: block;
+}
+
+.character-panel.hidden {
+    display: none;
 }
 
 /* ==================== Hotbar Styles ==================== */
