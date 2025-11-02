@@ -34,38 +34,43 @@
                 </div>
             </div>
 
-            <!-- 2. Inventory/Equipment Panel (TABBED & Scrollable) -->
+            <!-- 2. Inventory/Equipment Panel (COLLAPSIBLE & Scrollable) -->
             <div class="bg-gray-700 p-3 rounded-xl shadow-lg flex flex-col">
                 <h2 class="text-xl font-bold border-b border-gray-600 pb-2 mb-3 text-white">Loot & Gear</h2>
 
-                <!-- Tabs -->
-                <div class="flex border-b border-gray-600 mb-3">
-                    <button id="tab-inventory" class="p-2 mr-4 font-semibold text-sm text-white border-b-2 border-green-500 transition-colors">Inventory</button>
-                    <button id="tab-equipment" class="p-2 font-semibold text-sm text-gray-400 hover:text-white transition-colors">Equipment</button>
+                <!-- World Map Section -->
+                <div id="world-map" class="mb-3 p-3 bg-gray-800 rounded-lg">
+                    <!-- Map will be rendered here by JavaScript -->
                 </div>
 
-                <!-- Inventory Content Container -->
-                <div id="inventory-container" class="flex-1 overflow-y-auto custom-scroll pr-1">
-                    <div id="inventory-panel" class="space-y-2">
-                        <!-- Inventory items will be injected here by JavaScript -->
-                    </div>
-                </div>
+                <!-- Scrollable Container -->
+                <div class="flex-1 overflow-y-auto custom-scroll pr-1">
+                    <div class="space-y-3">
+                        <!-- Inventory Section -->
+                        <details open class="bg-gray-600 rounded-xl shadow overflow-hidden">
+                            <summary class="cursor-pointer p-2 text-sm font-semibold text-white border-l-4 border-green-500 hover:bg-gray-500 transition-colors duration-150">
+                                Inventory
+                            </summary>
+                            <div id="inventory-panel" class="p-2 space-y-2">
+                                <!-- Inventory items will be injected here by JavaScript -->
+                            </div>
+                        </details>
 
-                <!-- Equipment Content Container -->
-                <div id="equipment-container" class="hidden flex-1 overflow-y-auto custom-scroll pr-1">
-                    <div id="equipment-panel" class="grid grid-cols-2 gap-2">
-                        <!-- Equipment slots will be injected here by JavaScript -->
+                        <!-- Equipment Section -->
+                        <details class="bg-gray-600 rounded-xl shadow overflow-hidden">
+                            <summary class="cursor-pointer p-2 text-sm font-semibold text-white border-l-4 border-purple-500 hover:bg-gray-500 transition-colors duration-150">
+                                Equipment
+                            </summary>
+                            <div id="equipment-panel" class="p-2 grid grid-cols-2 gap-2">
+                                <!-- Equipment slots will be injected here by JavaScript -->
+                            </div>
+                        </details>
                     </div>
                 </div>
             </div>
 
             <!-- 3. Actions Panel (Scrollable) -->
             <div class="bg-gray-700 p-3 rounded-xl shadow-lg flex flex-col col-span-2">
-                <!-- World Map Section -->
-                <div id="world-map" class="mb-3 p-3 bg-gray-800 rounded-lg">
-                    <!-- Map will be rendered here by JavaScript -->
-                </div>
-
                 <h2 class="text-xl font-bold border-b border-gray-600 pb-2 mb-3 text-white">Available Actions</h2>
 
                 <!-- Scrollable Actions Container -->

@@ -19,7 +19,7 @@ class UIManager {
         // Initialize all UI components
         logUI.initialize('log');
         skillsUI.initialize('skills-panel', 'activity-status');
-        inventoryUI.initialize('inventory-panel', 'inventory-container', 'equipment-container', 'tab-inventory', 'tab-equipment');
+        inventoryUI.initialize('inventory-panel');
         equipmentUI.initialize('equipment-panel');
         actionsUI.initialize({
             woodcutting: 'woodcutting-actions',
@@ -47,6 +47,7 @@ class UIManager {
         mapUI.render();
         skillsUI.render();
         inventoryUI.render();
+        equipmentUI.render();
         actionsUI.render();
     }
 
@@ -63,7 +64,6 @@ class UIManager {
         window.addEventListener('itemEquipped', (e) => this.handleItemEquipped(e));
         window.addEventListener('itemUnequipped', (e) => this.handleItemUnequipped(e));
         window.addEventListener('equipError', (e) => this.handleEquipError(e));
-        window.addEventListener('equipmentTabOpened', () => equipmentUI.render());
 
         // Activity events
         window.addEventListener('activityStarted', (e) => this.handleActivityStarted(e));

@@ -11,47 +11,10 @@ import { getItemEmoji, getItemSlot, FOOD_DATA } from '../data/GameData.js';
 class InventoryUI {
     constructor() {
         this.inventoryPanel = null;
-        this.inventoryContainer = null;
-        this.equipmentContainer = null;
-        this.tabInventory = null;
-        this.tabEquipment = null;
     }
 
-    initialize(inventoryPanelId, inventoryContainerId, equipmentContainerId, tabInventoryId, tabEquipmentId) {
+    initialize(inventoryPanelId) {
         this.inventoryPanel = document.getElementById(inventoryPanelId);
-        this.inventoryContainer = document.getElementById(inventoryContainerId);
-        this.equipmentContainer = document.getElementById(equipmentContainerId);
-        this.tabInventory = document.getElementById(tabInventoryId);
-        this.tabEquipment = document.getElementById(tabEquipmentId);
-
-        // Set up tab listeners
-        if (this.tabInventory) {
-            this.tabInventory.addEventListener('click', () => this.switchTab('inventory'));
-        }
-        if (this.tabEquipment) {
-            this.tabEquipment.addEventListener('click', () => this.switchTab('equipment'));
-        }
-    }
-
-    switchTab(tabName) {
-        if (tabName === 'inventory') {
-            this.inventoryContainer?.classList.remove('hidden');
-            this.equipmentContainer?.classList.add('hidden');
-            this.tabInventory?.classList.add('border-green-500');
-            this.tabInventory?.classList.remove('text-gray-400');
-            this.tabEquipment?.classList.remove('border-green-500', 'text-white');
-            this.tabEquipment?.classList.add('text-gray-400');
-            this.render();
-        } else if (tabName === 'equipment') {
-            this.equipmentContainer?.classList.remove('hidden');
-            this.inventoryContainer?.classList.add('hidden');
-            this.tabEquipment?.classList.add('border-green-500');
-            this.tabEquipment?.classList.remove('text-gray-400');
-            this.tabInventory?.classList.remove('border-green-500', 'text-white');
-            this.tabInventory?.classList.add('text-gray-400');
-            // Trigger equipment render through event
-            window.dispatchEvent(new CustomEvent('equipmentTabOpened'));
-        }
     }
 
     render() {
@@ -82,7 +45,7 @@ class InventoryUI {
         const slot = getItemSlot(itemName);
 
         const itemDiv = document.createElement('div');
-        itemDiv.className = 'flex flex-col items-center justify-center p-2 bg-gray-600 rounded-lg shadow';
+        itemDiv.className = 'flex flex-col items-center justify-center p-2 bg-gray-700 rounded-lg shadow';
         itemDiv.innerHTML = `
             <span class="text-xl" role="img" aria-label="${itemName}">${emoji}</span>
             <span class="text-xs font-semibold text-white mt-0.5 text-center">${itemName}</span>
