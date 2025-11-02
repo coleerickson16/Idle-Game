@@ -10,13 +10,24 @@ import { ENEMY_TEMPLATES } from '../data/GameData.js';
 
 class CombatSystem {
     /**
-     * Calculate damage for an attack
+     * Calculate damage for an attack - SIMPLIFIED SYSTEM
+     *
+     * Damage Formula:
+     * 1. Max Hit = Attacker's offensive power (Attack + Strength for player, or enemy attack stat)
+     * 2. Roll random damage from 1 to Max Hit
+     * 3. Defender reduces damage by Defense/2 (rounded down)
+     * 4. Minimum damage is always 1
+     *
+     * This makes every stat level meaningful and easy to understand!
      */
-    rollHit(attackerEffectiveLevel, defenderDefense) {
-        const baseDamage = Math.floor(attackerEffectiveLevel / 3) + 1;
-        const rawDamage = Math.max(1, Math.floor(Math.random() * baseDamage) + 1);
-        const defenseFactor = defenderDefense > 0 ? (defenderDefense / (defenderDefense + 10)) : 0;
-        const finalDamage = Math.max(1, Math.floor(rawDamage * (1 - defenseFactor)));
+    rollHit(maxHit, defenderDefense) {
+        // Roll damage from 1 to max hit
+        const rawDamage = Math.floor(Math.random() * maxHit) + 1;
+
+        // Defense reduces damage by Defense/2 (flat reduction)
+        const defenseReduction = Math.floor(defenderDefense / 2);
+        const finalDamage = Math.max(1, rawDamage - defenseReduction);
+
         return finalDamage;
     }
 
@@ -69,11 +80,19 @@ class CombatSystem {
 
     /**
      * Process player attack on enemy
+     *
+     * Your Max Hit = (Attack level + weapon bonus) + (Strength level)
+     * Example: Attack 5 + Dagger (+3) + Strength 5 = Max Hit 13
+     * You can deal 1-13 damage before enemy defense
      */
     playerAttack(enemy) {
-        const playerEffectiveAttack = skillSystem.getEffectiveStat('Attack');
+        // Calculate your offensive power (Attack + Strength)
+        const playerAttack = skillSystem.getEffectiveStat('Attack'); // Includes equipment
         const playerStrength = gameState.getLevel('Strength');
-        const damage = this.rollHit(playerEffectiveAttack + playerStrength, enemy.defense);
+        const maxHit = playerAttack + playerStrength;
+
+        // Roll damage and apply enemy defense
+        const damage = this.rollHit(maxHit, enemy.defense);
 
         enemy.currentHealth -= damage;
         enemy.currentHealth = Math.max(0, enemy.currentHealth);
@@ -90,10 +109,20 @@ class CombatSystem {
 
     /**
      * Process enemy attack on player
+     *
+     * Enemy Max Hit = Enemy's attack stat
+     * Your Defense = Defense level + armor bonus
+     * Defense reduces damage by Defense/2
      */
     enemyAttack(enemy) {
-        const playerEffectiveDefense = skillSystem.getEffectiveStat('Defense');
-        const damage = this.rollHit(enemy.attack, playerEffectiveDefense);
+        // Enemy's max hit is their attack stat
+        const enemyMaxHit = enemy.attack;
+
+        // Your defense (includes armor bonuses)
+        const playerDefense = skillSystem.getEffectiveStat('Defense');
+
+        // Roll damage and apply your defense
+        const damage = this.rollHit(enemyMaxHit, playerDefense);
 
         gameState.modifyHealth(-damage);
 
