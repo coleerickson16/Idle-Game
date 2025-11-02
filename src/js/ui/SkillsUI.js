@@ -49,16 +49,19 @@ class SkillsUI {
         }
 
         const levelDisplayHTML = this.getLevelDisplayHTML(skill, baseLevel);
-        const progressHTML = this.getProgressHTML(skill, xpRemaining, baseLevel, progressPercentage);
+        const xpText = skill === 'Hitpoints' ? '' : `${xpRemaining.toFixed(0)} to ${baseLevel + 1}`;
 
         const skillDiv = document.createElement('div');
-        skillDiv.className = 'flex flex-col space-y-1 p-2 bg-gray-600 rounded-lg shadow';
+        skillDiv.className = 'skill-card';
         skillDiv.innerHTML = `
-            <div class="flex justify-between items-center">
-                <span class="text-sm font-semibold text-white">${skill}</span>
+            <div class="skill-card-header">
+                <div class="skill-card-name">${skill}</div>
                 ${levelDisplayHTML}
             </div>
-            ${progressHTML}
+            <div class="skill-card-progress">
+                <div class="skill-card-progress-bar" style="width: ${progressPercentage}%"></div>
+            </div>
+            <div class="skill-card-xp">${xpText}</div>
         `;
 
         return skillDiv;
@@ -68,30 +71,17 @@ class SkillsUI {
         if (skill === 'Hitpoints') {
             const maxHp = skillSystem.getMaxHealth();
             const currentHp = gameState.getCurrentHealth();
-            return `<span class="text-lg font-bold text-red-400">${currentHp}/${maxHp}</span>`;
+            return `<div class="skill-card-level" style="color: #ef4444;">${currentHp}/${maxHp}</div>`;
         }
 
         if (skill === 'Attack' || skill === 'Defense') {
             const bonus = skillSystem.getTotalEquipmentBonus(skill);
             if (bonus > 0) {
-                return `<span class="text-lg font-bold text-green-400">${baseLevel}
-                    <span class="text-indigo-400 text-xs">(+${bonus})</span></span>`;
+                return `<div class="skill-card-level">${baseLevel}<span style="color: #818cf8; font-size: 0.625rem;"> +${bonus}</span></div>`;
             }
         }
 
-        return `<span class="text-lg font-bold text-green-400">${baseLevel}</span>`;
-    }
-
-    getProgressHTML(skill, xpRemaining, baseLevel, progressPercentage) {
-        return `
-            <div class="text-xs text-gray-400 flex justify-between">
-                <span class="font-mono">${xpRemaining.toFixed(0)} to Lvl ${baseLevel + 1}</span>
-            </div>
-            <div class="w-full bg-gray-500 rounded-full h-2">
-                <div class="bg-green-500 h-2 rounded-full transition-all duration-300"
-                     style="width: ${progressPercentage}%"></div>
-            </div>
-        `;
+        return `<div class="skill-card-level">${baseLevel}</div>`;
     }
 
     updateActivityStatus(activityName) {
