@@ -7,11 +7,7 @@ import { gameState } from '../core/GameState.js';
 import { skillSystem } from '../systems/SkillSystem.js';
 import { hotbarSystem } from '../systems/HotbarSystem.js';
 import { inventorySystem } from '../systems/InventorySystem.js';
-import { ITEMS } from '../data/GameData.js';
-
-function getItemEmoji(itemName) {
-    return ITEMS[itemName]?.emoji || '❓';
-}
+import { getItemEmoji } from '../data/GameData.js';
 
 class CombatUI {
     constructor() {
