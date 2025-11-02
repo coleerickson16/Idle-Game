@@ -9,7 +9,9 @@ import { inventoryUI } from './InventoryUI.js';
 import { equipmentUI } from './EquipmentUI.js';
 import { actionsUI } from './ActionsUI.js';
 import { mapUI } from './MapUI.js';
+import { hotbarUI } from './HotbarUI.js';
 import { locationSystem } from '../systems/LocationSystem.js';
+import { notificationSystem } from '../systems/NotificationSystem.js';
 
 class UIManager {
     initialize() {
@@ -32,6 +34,8 @@ class UIManager {
             combat: 'combat-actions',
         }, 'stop-action-container');
         mapUI.init();
+        hotbarUI.init();
+        notificationSystem.init();
 
         // Set up event listeners
         this.setupEventListeners();
@@ -87,6 +91,10 @@ class UIManager {
         // Location events
         window.addEventListener('location-change', (e) => this.handleLocationChange(e));
         window.addEventListener('travel-error', (e) => this.handleTravelError(e));
+
+        // Hotbar events
+        window.addEventListener('hotbar-update', () => hotbarUI.render());
+        window.addEventListener('hotbar-error', (e) => logUI.log(e.detail.message, 'error'));
     }
 
     setupModalListeners() {
@@ -132,11 +140,33 @@ class UIManager {
             });
         }
 
+        // Skills modal
+        const btnOpenSkills = document.getElementById('btn-open-skills');
+        const skillsModal = document.getElementById('skills-modal');
+        const closeSkillsModal = document.getElementById('close-skills-modal');
+        const skillsOverlay = skillsModal?.querySelector('.modal-overlay');
+
+        if (btnOpenSkills && skillsModal) {
+            btnOpenSkills.addEventListener('click', () => {
+                skillsModal.classList.remove('hidden');
+                skillsUI.render();
+            });
+
+            closeSkillsModal?.addEventListener('click', () => {
+                skillsModal.classList.add('hidden');
+            });
+
+            skillsOverlay?.addEventListener('click', () => {
+                skillsModal.classList.add('hidden');
+            });
+        }
+
         // Close modals with Escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 inventoryModal?.classList.add('hidden');
                 equipmentModal?.classList.add('hidden');
+                skillsModal?.classList.add('hidden');
             }
         });
     }
@@ -161,6 +191,7 @@ class UIManager {
 
     handleInventoryUpdate() {
         inventoryUI.render();
+        hotbarUI.render();
     }
 
     handleItemEquipped(e) {
@@ -205,6 +236,8 @@ class UIManager {
     handleGatheringTick(e) {
         const { skill, itemName, xpGain } = e.detail;
         logUI.log(`You successfully gathered 1x ${itemName}. (+${xpGain} ${skill} XP)`, 'item');
+        // Show floating notification
+        notificationSystem.showResourceGain(itemName, 1);
         // Ensure stop button stays visible during activity
         actionsUI.renderStopButton();
     }
@@ -212,6 +245,8 @@ class UIManager {
     handleProductionTick(e) {
         const { skill, itemName, costItem, costAmount, producedItem, producedAmount, xpGain } = e.detail;
         logUI.log(`You successfully made ${producedAmount}x ${itemName}. (-${costAmount} ${costItem}, +${xpGain} ${skill} XP)`, 'item');
+        // Show floating notification for produced item
+        notificationSystem.showResourceGain(producedItem, producedAmount);
         // Ensure stop button stays visible during activity
         actionsUI.renderStopButton();
     }

@@ -45,12 +45,25 @@ class InventoryUI {
         const slot = getItemSlot(itemName);
 
         const itemDiv = document.createElement('div');
-        itemDiv.className = 'flex flex-col items-center justify-center p-2 bg-gray-700 rounded-lg shadow';
+        itemDiv.className = 'flex flex-col items-center justify-center p-2 bg-gray-700 rounded-lg shadow cursor-move';
+        itemDiv.draggable = true;
+        itemDiv.dataset.itemName = itemName;
+
         itemDiv.innerHTML = `
             <span class="text-xl" role="img" aria-label="${itemName}">${emoji}</span>
             <span class="text-xs font-semibold text-white mt-0.5 text-center">${itemName}</span>
             <span class="text-base font-bold text-yellow-300">${count}</span>
         `;
+
+        // Drag-and-drop handlers
+        itemDiv.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', itemName);
+            itemDiv.classList.add('opacity-50');
+        });
+
+        itemDiv.addEventListener('dragend', (e) => {
+            itemDiv.classList.remove('opacity-50');
+        });
 
         // Add equip button if item is equipable
         if (slot) {

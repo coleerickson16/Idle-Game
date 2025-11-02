@@ -26,6 +26,7 @@ class GameState {
             currentLocation: 'Town', // Starting location
             inventory: this.initializeInventory(),
             equipment: this.initializeEquipment(),
+            hotbar: this.initializeHotbar(),
             currentActivity: {
                 name: 'Idle',
                 interval: null,
@@ -35,6 +36,11 @@ class GameState {
                 target: null, // Holds enemy instance during combat
             }
         };
+    }
+
+    initializeHotbar() {
+        // 9 slots for hotbar (indexed 0-8, keys 1-9)
+        return Array(9).fill(null);
     }
 
     initializeInventory() {
@@ -216,6 +222,26 @@ class GameState {
             targetLevel: 0,
             target: null,
         };
+    }
+
+    getHotbar() {
+        return this.player.hotbar;
+    }
+
+    getHotbarSlot(index) {
+        return this.player.hotbar[index];
+    }
+
+    setHotbarSlot(index, itemName) {
+        if (index >= 0 && index < 9) {
+            this.player.hotbar[index] = itemName;
+        }
+    }
+
+    clearHotbarSlot(index) {
+        if (index >= 0 && index < 9) {
+            this.player.hotbar[index] = null;
+        }
     }
 }
 

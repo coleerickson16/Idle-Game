@@ -373,3 +373,123 @@ details[open] summary:before {
     grid-column: 3;
     grid-row: 5;
 }
+
+/* ==================== Hotbar Styles ==================== */
+
+.hotbar {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 0.5rem;
+}
+
+.hotbar-slot {
+    position: relative;
+    aspect-ratio: 1;
+    background-color: #1f2937;
+    border: 2px solid #4b5563;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.hotbar-slot:hover {
+    border-color: #6b7280;
+    background-color: #374151;
+}
+
+.hotbar-slot-dragover {
+    border-color: #10b981;
+    background-color: #065f46;
+}
+
+.hotbar-key {
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-size: 0.625rem;
+    color: #9ca3af;
+    font-weight: 600;
+}
+
+.hotbar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.hotbar-item:hover {
+    transform: scale(1.05);
+}
+
+.hotbar-count {
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #fbbf24;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.hotbar-empty {
+    font-size: 1.5rem;
+    color: #4b5563;
+    font-weight: 300;
+}
+
+/* ==================== Notifications ==================== */
+
+.notifications-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 2000;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.notification {
+    background-color: #1f2937;
+    border-left: 4px solid #10b981;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    color: #f3f4f6;
+    font-size: 0.875rem;
+    font-weight: 600;
+    min-width: 200px;
+    opacity: 0;
+    transform: translateX(100px);
+    transition: all 0.3s ease-out;
+}
+
+.notification-show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.notification-hide {
+    opacity: 0;
+    transform: translateX(100px);
+}
+
+.notification-resource {
+    border-left-color: #fbbf24;
+}
+
+.notification-info {
+    border-left-color: #3b82f6;
+}
+
+.notification-error {
+    border-left-color: #ef4444;
+}
