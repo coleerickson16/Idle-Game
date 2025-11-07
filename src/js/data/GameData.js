@@ -296,7 +296,7 @@ export const LOCATIONS = {
         emoji: '🏘️',
         description: 'The heart of Lumbridge Valley. A bustling town square where new adventurers begin their journey.',
         region: 'LumbridgeValley',
-        connections: ['FarmFields', 'RiverLum', 'LumbridgeForest', 'ForestEdge'],
+        connections: ['FarmFields', 'RiverLum', 'LumbridgeForest', 'ForestEdge', 'MountainBase'],
         subLocations: ['Bank', 'Merchant', 'Kitchen', 'Smithy'],
         activities: [],
         unlocked: true,
