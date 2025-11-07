@@ -1291,6 +1291,33 @@ details[open] summary:before {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
+/* Make world-map container scrollable when showing tiles */
+#world-map {
+    overflow-y: auto;
+    overflow-x: auto;
+    max-height: calc(100vh - 300px); /* Allow scrolling if content is too tall */
+}
+
+/* Custom scrollbar for world map */
+#world-map::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+#world-map::-webkit-scrollbar-track {
+    background: #111827;
+    border-radius: 4px;
+}
+
+#world-map::-webkit-scrollbar-thumb {
+    background-color: #10b981;
+    border-radius: 4px;
+}
+
+#world-map::-webkit-scrollbar-thumb:hover {
+    background-color: #059669;
+}
+
 /* Tile grid container */
 .tilemap-grid {
     display: grid;
@@ -1300,6 +1327,9 @@ details[open] summary:before {
     border-radius: 0.5rem;
     margin-bottom: 1rem;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+    width: fit-content; /* Don't stretch beyond content */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Individual tile */
@@ -1313,6 +1343,8 @@ details[open] summary:before {
     transition: all 0.15s;
     position: relative;
     border: 1px solid rgba(75, 85, 99, 0.3);
+    min-width: 28px; /* Ensure tiles have minimum size */
+    min-height: 28px;
 }
 
 .tile:hover {
@@ -1377,14 +1409,14 @@ details[open] summary:before {
 
 /* Tile emoji */
 .tile-emoji {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     pointer-events: none;
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
 }
 
 /* Player avatar emoji */
 .player-avatar {
-    font-size: 2rem;
+    font-size: 1.75rem;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
     animation: bob 2s ease-in-out infinite;
 }
