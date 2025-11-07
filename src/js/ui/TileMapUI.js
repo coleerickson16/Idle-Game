@@ -48,14 +48,16 @@ class TileMapUI {
         `;
         this.container.appendChild(header);
 
-        // Create grid container
-        const gridContainer = document.createElement('div');
-        gridContainer.className = 'tilemap-grid';
-        gridContainer.style.gridTemplateColumns = `repeat(${this.viewport.width}, 1fr)`;
-        gridContainer.style.gridTemplateRows = `repeat(${this.viewport.height}, 1fr)`;
-
         // Calculate viewport bounds (center on player)
         const bounds = this.calculateViewport(playerPos, map);
+
+        // Create grid container with ACTUAL rendered dimensions
+        const gridContainer = document.createElement('div');
+        gridContainer.className = 'tilemap-grid';
+        const actualWidth = bounds.maxX - bounds.minX;
+        const actualHeight = bounds.maxY - bounds.minY;
+        gridContainer.style.gridTemplateColumns = `repeat(${actualWidth}, 1fr)`;
+        gridContainer.style.gridTemplateRows = `repeat(${actualHeight}, 1fr)`;
 
         // Render visible tiles
         for (let y = bounds.minY; y < bounds.maxY; y++) {
@@ -237,30 +239,33 @@ class TileMapUI {
     handleKeyPress(event) {
         if (!tileMapSystem.isInExploration()) return;
 
-        let moved = false;
         const key = event.key.toLowerCase();
 
-        // Check if it's a movement key and prevent default browser behavior
-        if (['w', 's', 'a', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(key)) {
-            event.preventDefault(); // Prevent scroll/default behavior BEFORE processing
-        }
+        // Only handle movement keys
+        const movementKeys = ['w', 's', 'a', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'];
+        if (!movementKeys.includes(key)) return;
 
+        // Prevent default browser behavior and stop event propagation
+        event.preventDefault();
+        event.stopPropagation();
+
+        // Process movement
         switch(key) {
             case 'w':
             case 'arrowup':
-                moved = tileMapSystem.move('up');
+                tileMapSystem.move('up');
                 break;
             case 's':
             case 'arrowdown':
-                moved = tileMapSystem.move('down');
+                tileMapSystem.move('down');
                 break;
             case 'a':
             case 'arrowleft':
-                moved = tileMapSystem.move('left');
+                tileMapSystem.move('left');
                 break;
             case 'd':
             case 'arrowright':
-                moved = tileMapSystem.move('right');
+                tileMapSystem.move('right');
                 break;
         }
     }
