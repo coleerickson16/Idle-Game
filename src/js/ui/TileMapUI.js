@@ -9,7 +9,8 @@ import { TILE_DISPLAY } from '../data/TileMaps.js';
 class TileMapUI {
     constructor() {
         this.container = null;
-        this.viewport = { width: 15, height: 11 }; // Visible tiles (odd numbers for centering)
+        this.viewport = { width: 25, height: 15 }; // Show much more of the map
+        this.keyHandlerBound = null; // Store bound handler to remove/add only once
     }
 
     init(containerId) {
@@ -18,6 +19,9 @@ class TileMapUI {
             console.error(`Tile map container '${containerId}' not found!`);
             return;
         }
+
+        // Bind keyboard handler once
+        this.keyHandlerBound = this.handleKeyPress.bind(this);
     }
 
     /**
@@ -78,17 +82,37 @@ class TileMapUI {
 
     /**
      * Calculate which tiles should be visible
+     * Shows a fixed viewport of the map - doesn't constantly recenter
      */
     calculateViewport(playerPos, map) {
+        // If map is smaller than viewport, show the whole map
+        if (map.width <= this.viewport.width && map.height <= this.viewport.height) {
+            return {
+                minX: 0,
+                maxX: map.width,
+                minY: 0,
+                maxY: map.height
+            };
+        }
+
+        // Show a larger fixed area - only pan when player gets near edges
         const halfW = Math.floor(this.viewport.width / 2);
         const halfH = Math.floor(this.viewport.height / 2);
 
-        let minX = playerPos.x - halfW;
-        let maxX = playerPos.x + halfW + 1;
-        let minY = playerPos.y - halfH;
-        let maxY = playerPos.y + halfH + 1;
+        // Calculate center of viewport
+        let centerX = playerPos.x;
+        let centerY = playerPos.y;
 
-        // Clamp to map bounds
+        // Clamp center to ensure viewport doesn't go out of bounds
+        centerX = Math.max(halfW, Math.min(map.width - halfW, centerX));
+        centerY = Math.max(halfH, Math.min(map.height - halfH, centerY));
+
+        let minX = centerX - halfW;
+        let maxX = centerX + halfW;
+        let minY = centerY - halfH;
+        let maxY = centerY + halfH;
+
+        // Final clamp to map bounds
         minX = Math.max(0, minX);
         minY = Math.max(0, minY);
         maxX = Math.min(map.width, maxX);
@@ -184,12 +208,27 @@ class TileMapUI {
         const exitBtn = document.getElementById('exit-tilemap');
         if (exitBtn) {
             exitBtn.addEventListener('click', () => {
+                this.cleanup();
                 tileMapSystem.exitExploration();
             });
         }
 
-        // Keyboard movement (WASD and Arrow keys)
-        document.addEventListener('keydown', this.handleKeyPress.bind(this));
+        // Keyboard movement (WASD and Arrow keys) - add only once
+        if (this.keyHandlerBound) {
+            // Remove existing listener first to avoid duplicates
+            document.removeEventListener('keydown', this.keyHandlerBound);
+            // Add the listener
+            document.addEventListener('keydown', this.keyHandlerBound);
+        }
+    }
+
+    /**
+     * Clean up event listeners when exiting tile mode
+     */
+    cleanup() {
+        if (this.keyHandlerBound) {
+            document.removeEventListener('keydown', this.keyHandlerBound);
+        }
     }
 
     /**

@@ -16,6 +16,7 @@ import { merchantUI } from './MerchantUI.js';
 import { collectionLogUI } from './CollectionLogUI.js';
 import { locationSystem } from '../systems/LocationSystem.js';
 import { notificationSystem } from '../systems/NotificationSystem.js';
+import { activitySystem } from '../systems/ActivitySystem.js';
 import { gameState } from '../core/GameState.js';
 
 class UIManager {
@@ -126,8 +127,8 @@ class UIManager {
         window.addEventListener('tileMapExited', (e) => this.handleTileMapExited(e));
         window.addEventListener('playerMoved', (e) => this.handlePlayerMoved(e));
         window.addEventListener('regionTransition', (e) => this.handleRegionTransition(e));
-        window.addEventListener('resourceGathered', (e) => this.handleResourceGathered(e));
-        window.addEventListener('locationEntered', (e) => this.handleLocationEntered(e));
+        window.addEventListener('tileResourceInteract', (e) => this.handleTileResourceInteract(e));
+        window.addEventListener('tileLocationEnter', (e) => this.handleTileLocationEnter(e));
     }
 
     setupModalListeners() {
@@ -488,17 +489,31 @@ class UIManager {
         mapUI.render();
     }
 
-    handleResourceGathered(e) {
-        const { resourceType, itemName } = e.detail;
-        // Resource gathering is already handled by activity system
-        // This is just to keep track of tile-based interactions
+    handleTileResourceInteract(e) {
+        const { action } = e.detail;
+        // Start the gathering activity using the activity system
+        if (action.type === 'resource') {
+            const success = activitySystem.startGathering(
+                action.skill,
+                action.item,
+                action.xp,
+                action.levelReq
+            );
+            if (success) {
+                logUI.log(`⛏️ You start gathering ${action.item}...`, 'info');
+            }
+        }
     }
 
-    handleLocationEntered(e) {
-        const { locationId, locationName } = e.detail;
-        logUI.log(`🏛️ Entering ${locationName}...`, 'success');
-        // Actions UI will automatically update when location changes
-        actionsUI.render();
+    handleTileLocationEnter(e) {
+        const { locationId } = e.detail;
+        // Travel to the building/location
+        const canTravel = locationSystem.canTravelTo(locationId);
+        if (canTravel.success) {
+            locationSystem.travelTo(locationId);
+        } else {
+            logUI.log(`Cannot enter: ${canTravel.reason}`, 'error');
+        }
     }
 
     /**

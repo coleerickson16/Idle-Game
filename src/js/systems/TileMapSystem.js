@@ -36,9 +36,13 @@ class TileMapSystem {
      * Exit exploration mode (return to world map)
      */
     exitExploration() {
+        const regionId = this.currentMap?.regionId;
+        const regionName = this.currentMap?.name;
+
         this.isExploring = false;
         this.currentMap = null;
-        this.dispatchMapExited();
+
+        this.dispatchMapExited(regionId, regionName);
     }
 
     /**
@@ -182,8 +186,8 @@ class TileMapSystem {
      * Handle resource gathering
      */
     handleResourceInteraction(action) {
-        // This will trigger the activity system
-        this.dispatchResourceInteract(action.activity, action.item);
+        // This will trigger the activity system with full action data
+        this.dispatchResourceInteract(action);
         return { success: true, action };
     }
 
@@ -219,12 +223,21 @@ class TileMapSystem {
     // Event dispatching
     dispatchMapEntered(regionId) {
         window.dispatchEvent(new CustomEvent('tileMapEntered', {
-            detail: { regionId, map: this.currentMap }
+            detail: {
+                regionId,
+                regionName: this.currentMap.name,
+                map: this.currentMap
+            }
         }));
     }
 
-    dispatchMapExited() {
-        window.dispatchEvent(new CustomEvent('tileMapExited'));
+    dispatchMapExited(regionId, regionName) {
+        window.dispatchEvent(new CustomEvent('tileMapExited', {
+            detail: {
+                regionId: regionId || 'Unknown',
+                regionName: regionName || 'Unknown Region'
+            }
+        }));
     }
 
     dispatchPlayerMoved(oldPos, newPos) {
@@ -245,9 +258,9 @@ class TileMapSystem {
         }));
     }
 
-    dispatchResourceInteract(activity, item) {
+    dispatchResourceInteract(action) {
         window.dispatchEvent(new CustomEvent('tileResourceInteract', {
-            detail: { activity, item }
+            detail: { action }
         }));
     }
 }
