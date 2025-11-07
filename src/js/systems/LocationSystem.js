@@ -5,6 +5,7 @@
 
 import { LOCATIONS } from '../data/GameData.js';
 import { gameState } from '../core/GameState.js';
+import { activitySystem } from './ActivitySystem.js';
 
 class LocationSystem {
     constructor() {
@@ -117,6 +118,9 @@ class LocationSystem {
             this.dispatchTravelError(canTravel.reason);
             return false;
         }
+
+        // Stop any current activity when traveling
+        activitySystem.stopActivity();
 
         const oldLocation = this.currentLocation;
         this.currentLocation = locationId;
