@@ -28,7 +28,13 @@ class MerchantUI {
 
         const shopItems = merchantSystem.getShopItems();
         const playerCoins = inventorySystem.getItemCount('Coins');
-        const playerItems = inventorySystem.getNonEmptyItems();
+        const playerItemsArray = inventorySystem.getNonEmptyItems();
+
+        // Convert inventory array to object format
+        const playerItems = {};
+        playerItemsArray.forEach(item => {
+            playerItems[item.name] = item.count;
+        });
 
         this.container.innerHTML = `
             <div class="merchant-interface">

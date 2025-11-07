@@ -27,7 +27,14 @@ class BankUI {
         if (!this.container) return;
 
         const bankItems = bankSystem.getNonEmptyItems();
-        const inventoryItems = inventorySystem.getNonEmptyItems();
+        const inventoryItemsArray = inventorySystem.getNonEmptyItems();
+
+        // Convert inventory array to object format
+        const inventoryItems = {};
+        inventoryItemsArray.forEach(item => {
+            inventoryItems[item.name] = item.count;
+        });
+
         const totalBankItems = bankSystem.getTotalItems();
 
         this.container.innerHTML = `
