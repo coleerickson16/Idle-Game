@@ -208,7 +208,7 @@ export const LOCATIONS = {
         emoji: '🏘️',
         description: 'The central hub where adventurers gather',
         connections: ['Mine', 'Forest', 'Lake'],
-        subLocations: ['Kitchen', 'Smithy'], // Buildings within town
+        subLocations: ['Bank', 'Merchant', 'Kitchen', 'Smithy'], // Buildings within town
         activities: [], // Town itself has no activities
         unlocked: true, // Always accessible
     },
@@ -244,6 +244,28 @@ export const LOCATIONS = {
         unlocked: true,
         levelRequirement: null,
         parent: null,
+    },
+    Bank: {
+        id: 'Bank',
+        name: 'Bank',
+        emoji: '🏦',
+        description: 'Store your items safely here',
+        connections: [],
+        activities: ['banking'],
+        unlocked: true,
+        levelRequirement: null,
+        parent: 'Town',
+    },
+    Merchant: {
+        id: 'Merchant',
+        name: 'Merchant',
+        emoji: '🛒',
+        description: 'Buy and sell items with the merchant',
+        connections: [],
+        activities: ['shopping'],
+        unlocked: true,
+        levelRequirement: null,
+        parent: 'Town',
     },
     Kitchen: {
         id: 'Kitchen',
@@ -370,4 +392,24 @@ export const ACTIONS = {
     combat: [
         { id: 'fight-goblin', name: 'Fight Goblin', levelReq: 1, enemy: 'Goblin' },
     ],
+};
+
+/**
+ * Shop Items - Items available for purchase at the merchant
+ */
+export const SHOP_ITEMS = {
+    // Basic Food
+    'Shrimp': { buyPrice: 10, sellPrice: 5, category: 'food' },
+    'Trout': { buyPrice: 25, sellPrice: 12, category: 'food' },
+    'Salmon': { buyPrice: 50, sellPrice: 25, category: 'food' },
+
+    // Basic Equipment
+    'BronzeAxe': { buyPrice: 50, sellPrice: 25, category: 'tool' },
+    'BronzeHelmet': { buyPrice: 100, sellPrice: 50, category: 'equipment' },
+    'BronzePlatelegs': { buyPrice: 150, sellPrice: 75, category: 'equipment' },
+    'BronzePlatebody': { buyPrice: 200, sellPrice: 100, category: 'equipment' },
+
+    // Raw Materials (can be bought at higher price than sell)
+    'Logs': { buyPrice: 5, sellPrice: 2, category: 'resource' },
+    'CopperOre': { buyPrice: 8, sellPrice: 3, category: 'resource' },
 };

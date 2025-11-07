@@ -7,6 +7,8 @@ import { gameState } from '../core/GameState.js';
 import { activitySystem } from '../systems/ActivitySystem.js';
 import { locationSystem } from '../systems/LocationSystem.js';
 import { ACTIONS, ENEMY_TEMPLATES } from '../data/GameData.js';
+import { bankUI } from './BankUI.js';
+import { merchantUI } from './MerchantUI.js';
 
 class ActionsUI {
     constructor() {
@@ -37,6 +39,8 @@ class ActionsUI {
         if (availableActivities.includes('smithing')) this.renderSmithing();
         if (availableActivities.includes('fletching')) this.renderFletching();
         if (availableActivities.includes('cooking')) this.renderCooking();
+        if (availableActivities.includes('banking')) this.renderBanking();
+        if (availableActivities.includes('shopping')) this.renderShopping();
         if (availableActivities.includes('combat')) this.renderCombat();
 
         this.renderStopButton();
@@ -52,7 +56,7 @@ class ActionsUI {
 
     hideAllSections() {
         // Hide all section containers
-        const sections = ['woodcutting', 'mining', 'fishing', 'firemaking', 'smithing', 'fletching', 'cooking', 'combat'];
+        const sections = ['woodcutting', 'mining', 'fishing', 'firemaking', 'smithing', 'fletching', 'cooking', 'banking', 'shopping', 'combat'];
         sections.forEach(sectionName => {
             const section = document.getElementById(`${sectionName}-section`);
             if (section) section.style.display = 'none';
@@ -241,6 +245,18 @@ class ActionsUI {
             );
             panel.appendChild(button);
         });
+    }
+
+    renderBanking() {
+        this.showSection('banking');
+        bankUI.init('banking-actions');
+        bankUI.render();
+    }
+
+    renderShopping() {
+        this.showSection('shopping');
+        merchantUI.init('shopping-actions');
+        merchantUI.render();
     }
 
     renderEnemyHealthBar(enemy) {

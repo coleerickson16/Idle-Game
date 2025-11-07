@@ -11,6 +11,8 @@ import { actionsUI } from './ActionsUI.js';
 import { mapUI } from './MapUI.js';
 import { hotbarUI } from './HotbarUI.js';
 import { combatUI } from './CombatUI.js';
+import { bankUI } from './BankUI.js';
+import { merchantUI } from './MerchantUI.js';
 import { locationSystem } from '../systems/LocationSystem.js';
 import { notificationSystem } from '../systems/NotificationSystem.js';
 import { gameState } from '../core/GameState.js';
@@ -104,6 +106,14 @@ class UIManager {
             }
         });
         window.addEventListener('hotbar-error', (e) => logUI.log(e.detail.message, 'error'));
+
+        // Bank events
+        window.addEventListener('bankUpdated', (e) => this.handleBankUpdate(e));
+        window.addEventListener('bankError', (e) => this.handleBankError(e));
+
+        // Merchant events
+        window.addEventListener('merchantTransaction', (e) => this.handleMerchantTransaction(e));
+        window.addEventListener('merchantError', (e) => this.handleMerchantError(e));
     }
 
     setupModalListeners() {
@@ -369,6 +379,40 @@ class UIManager {
     handleTravelError(e) {
         const { reason } = e.detail;
         logUI.log(`Cannot travel: ${reason}`, 'error');
+    }
+
+    handleBankUpdate(e) {
+        const { action, itemName, amount } = e.detail;
+        if (action === 'deposit') {
+            logUI.log(`🏦 Deposited ${amount}x ${itemName} to the bank.`, 'success');
+        } else if (action === 'withdraw') {
+            logUI.log(`🏦 Withdrew ${amount}x ${itemName} from the bank.`, 'success');
+        }
+        // Re-render both inventory and bank UI
+        inventoryUI.render();
+        actionsUI.render(); // This will re-render the bank UI if we're at the bank
+    }
+
+    handleBankError(e) {
+        const { message } = e.detail;
+        logUI.log(message, 'error');
+    }
+
+    handleMerchantTransaction(e) {
+        const { action, itemName, quantity, value } = e.detail;
+        if (action === 'buy') {
+            logUI.log(`🛒 Bought ${quantity}x ${itemName} for ${value} coins.`, 'success');
+        } else if (action === 'sell') {
+            logUI.log(`💰 Sold ${quantity}x ${itemName} for ${value} coins.`, 'success');
+        }
+        // Re-render both inventory and merchant UI
+        inventoryUI.render();
+        actionsUI.render(); // This will re-render the merchant UI if we're at the merchant
+    }
+
+    handleMerchantError(e) {
+        const { message } = e.detail;
+        logUI.log(message, 'error');
     }
 
     /**

@@ -27,6 +27,7 @@ class GameState {
             inventory: this.initializeInventory(),
             equipment: this.initializeEquipment(),
             hotbar: this.initializeHotbar(),
+            bank: this.initializeInventory(), // Bank uses same item structure as inventory
             currentActivity: {
                 name: 'Idle',
                 interval: null,
@@ -241,6 +242,27 @@ class GameState {
     clearHotbarSlot(index) {
         if (index >= 0 && index < 9) {
             this.player.hotbar[index] = null;
+        }
+    }
+
+    // Bank methods
+    getAllBankItems() {
+        return this.player.bank;
+    }
+
+    getBankItem(itemName) {
+        return this.player.bank[itemName] || 0;
+    }
+
+    addBankItem(itemName, amount = 1) {
+        if (this.player.bank[itemName] !== undefined) {
+            this.player.bank[itemName] += amount;
+        }
+    }
+
+    removeBankItem(itemName, amount = 1) {
+        if (this.player.bank[itemName] !== undefined) {
+            this.player.bank[itemName] = Math.max(0, this.player.bank[itemName] - amount);
         }
     }
 }
