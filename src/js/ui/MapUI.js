@@ -1,10 +1,10 @@
 /**
  * MapUI.js
- * Renders the visual world map with location nodes
+ * Renders the visual world map with region-based organization
  */
 
 import { locationSystem } from '../systems/LocationSystem.js';
-import { LOCATIONS } from '../data/GameData.js';
+import { LOCATIONS, REGIONS } from '../data/GameData.js';
 
 class MapUI {
     constructor() {
