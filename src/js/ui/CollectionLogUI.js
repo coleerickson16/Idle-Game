@@ -99,16 +99,31 @@ class CollectionLogUI {
         const emojiMap = {
             'resource': '🪵',
             'ore': '⛏️',
-            'fish': '🐟',
+            'bar': '🔥',
+            'raw-fish': '🎣',
             'food': '🍖',
             'equipment': '⚔️',
             'tool': '🔨',
+            'drops': '💀',
+            'currency': '💰',
             'other': '📦'
         };
         return emojiMap[category] || '📦';
     }
 
     formatCategoryName(category) {
+        // Handle special cases
+        const nameMap = {
+            'raw-fish': 'Raw Fish',
+            'currency': 'Currency',
+            'drops': 'Combat Drops'
+        };
+
+        if (nameMap[category]) {
+            return nameMap[category];
+        }
+
+        // Default: capitalize first letter
         return category.charAt(0).toUpperCase() + category.slice(1);
     }
 }

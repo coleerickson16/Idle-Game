@@ -4,15 +4,15 @@
  */
 
 import { gameState } from '../core/GameState.js';
-import { ITEMS } from '../data/GameData.js';
+import { ITEM_EMOJIS } from '../data/GameData.js';
 
 class CollectionLogSystem {
     /**
      * Record an item as discovered
      */
     discoverItem(itemName) {
-        // Check if item exists in ITEMS data
-        if (!ITEMS[itemName]) {
+        // Check if item exists in ITEM_EMOJIS data
+        if (!ITEM_EMOJIS[itemName]) {
             return false;
         }
 
@@ -55,8 +55,8 @@ class CollectionLogSystem {
         const stats = {};
 
         // Count all items and discovered items by category
-        Object.keys(ITEMS).forEach(itemName => {
-            const category = ITEMS[itemName].category || 'other';
+        Object.keys(ITEM_EMOJIS).forEach(itemName => {
+            const category = this.getItemCategory(itemName);
 
             if (!stats[category]) {
                 stats[category] = {
@@ -78,10 +78,29 @@ class CollectionLogSystem {
     }
 
     /**
+     * Determine item category based on name
+     */
+    getItemCategory(itemName) {
+        if (itemName.includes('Logs') || itemName.includes('Shafts')) return 'resource';
+        if (itemName.includes('Ore')) return 'ore';
+        if (itemName.includes('Bar')) return 'bar';
+        if (itemName.includes('Raw')) return 'raw-fish';
+        if (itemName.includes('Shrimp') || itemName.includes('Trout') || itemName.includes('Salmon') ||
+            itemName.includes('Tuna') || itemName.includes('Lobster') || itemName.includes('Swordfish') ||
+            itemName.includes('Shark') || itemName.includes('Anglerfish')) return 'food';
+        if (itemName.includes('Helmet') || itemName.includes('Platelegs') || itemName.includes('Platebody') ||
+            itemName.includes('Dagger')) return 'equipment';
+        if (itemName.includes('Axe')) return 'tool';
+        if (itemName === 'Bones') return 'drops';
+        if (itemName === 'Coins') return 'currency';
+        return 'other';
+    }
+
+    /**
      * Get overall completion percentage
      */
     getCompletionPercentage() {
-        const totalItems = Object.keys(ITEMS).length;
+        const totalItems = Object.keys(ITEM_EMOJIS).length;
         const discoveredItems = Object.keys(this.getDiscoveredItems()).length;
 
         if (totalItems === 0) return 0;
@@ -94,7 +113,7 @@ class CollectionLogSystem {
      */
     getTotalCounts() {
         return {
-            total: Object.keys(ITEMS).length,
+            total: Object.keys(ITEM_EMOJIS).length,
             discovered: Object.keys(this.getDiscoveredItems()).length
         };
     }
@@ -106,9 +125,9 @@ class CollectionLogSystem {
         const discovered = this.getDiscoveredItems();
         const missing = {};
 
-        Object.keys(ITEMS).forEach(itemName => {
+        Object.keys(ITEM_EMOJIS).forEach(itemName => {
             if (!discovered[itemName]) {
-                const category = ITEMS[itemName].category || 'other';
+                const category = this.getItemCategory(itemName);
 
                 if (!missing[category]) {
                     missing[category] = [];
