@@ -21,7 +21,7 @@ class MapUI {
     }
 
     /**
-     * Render the world map
+     * Render the world map with regions
      */
     render() {
         if (!this.mapContainer) return;
@@ -33,74 +33,49 @@ class MapUI {
         // Clear existing map
         this.mapContainer.innerHTML = '';
 
-        // Create map title
-        const mapTitle = document.createElement('div');
-        mapTitle.className = 'map-title';
-        mapTitle.innerHTML = `
-            <span class="text-sm text-gray-300">Current Location:</span>
-            <span class="text-lg font-bold text-white">${currentLocationData.emoji} ${currentLocationData.name}</span>
+        // Create map header with current location
+        const mapHeader = document.createElement('div');
+        mapHeader.className = 'map-header';
+        mapHeader.innerHTML = `
+            <div class="text-xs text-gray-400">Current Location</div>
+            <div class="text-lg font-bold text-white">${currentLocationData.emoji} ${currentLocationData.name}</div>
+            <div class="text-xs text-gray-400 italic">${currentLocationData.description}</div>
         `;
-        this.mapContainer.appendChild(mapTitle);
+        this.mapContainer.appendChild(mapHeader);
 
-        // Create map visual container (holds SVG + nodes)
-        const mapVisual = document.createElement('div');
-        mapVisual.className = 'map-visual';
-        mapVisual.style.position = 'relative';
+        // Group locations by region
+        const locationsByRegion = this.groupLocationsByRegion();
 
-        // Create SVG for connection lines
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('class', 'map-connections');
-        svg.style.position = 'absolute';
-        svg.style.top = '0';
-        svg.style.left = '0';
-        svg.style.width = '100%';
-        svg.style.height = '100%';
-        svg.style.pointerEvents = 'none';
-        svg.style.zIndex = '0';
-        mapVisual.appendChild(svg);
+        // Render each region
+        Object.keys(REGIONS).forEach(regionId => {
+            const region = REGIONS[regionId];
+            const locations = locationsByRegion[regionId] || [];
 
-        // Create map nodes container
-        const nodesContainer = document.createElement('div');
-        nodesContainer.className = 'map-nodes';
-        nodesContainer.style.position = 'relative';
-        nodesContainer.style.zIndex = '1';
+            if (locations.length === 0) return; // Skip regions with no locations
 
-        // Define layout positions for each location
-        const layout = this.getMapLayout();
+            // Check if any location in this region is current or connected
+            const hasCurrentLocation = locations.some(loc => loc.id === currentLocation);
+            const hasConnectedLocation = locations.some(loc => connectedLocations.includes(loc.id));
+            const isRelevant = hasCurrentLocation || hasConnectedLocation;
 
-        // Render all main locations (not nested ones)
-        Object.keys(layout).forEach(locationId => {
-            const location = LOCATIONS[locationId];
-            const position = layout[locationId];
-
-            const node = this.createLocationNode(
-                location,
-                locationId === currentLocation,
-                connectedLocations.includes(locationId)
+            const regionElement = this.createRegionElement(
+                region,
+                locations,
+                currentLocation,
+                connectedLocations,
+                isRelevant
             );
 
-            // Apply position styling
-            node.style.gridColumn = position.col;
-            node.style.gridRow = position.row;
-            node.setAttribute('data-location', locationId);
-
-            nodesContainer.appendChild(node);
+            this.mapContainer.appendChild(regionElement);
         });
-
-        mapVisual.appendChild(nodesContainer);
-
-        // Draw connection lines after nodes are rendered
-        setTimeout(() => {
-            this.drawConnectionLines(svg, layout, connectedLocations, currentLocation);
-        }, 0);
-
-        this.mapContainer.appendChild(mapVisual);
 
         // Show sub-locations if at a parent location
         if (currentLocationData.subLocations && currentLocationData.subLocations.length > 0) {
             const subLocationsContainer = document.createElement('div');
-            subLocationsContainer.className = 'sub-locations';
-            subLocationsContainer.innerHTML = '<div class="text-sm text-gray-400 mb-2">Buildings in Town:</div>';
+            subLocationsContainer.className = 'sub-locations-panel';
+            subLocationsContainer.innerHTML = `
+                <div class="sub-locations-title">📍 Buildings in ${currentLocationData.name}:</div>
+            `;
 
             const subGrid = document.createElement('div');
             subGrid.className = 'sub-locations-grid';
@@ -118,80 +93,77 @@ class MapUI {
             subLocationsContainer.appendChild(subGrid);
             this.mapContainer.appendChild(subLocationsContainer);
         }
-
-        // Add location description
-        const description = document.createElement('div');
-        description.className = 'map-description';
-        description.textContent = currentLocationData.description;
-        this.mapContainer.appendChild(description);
     }
 
     /**
-     * Define the visual layout of the map
-     * Returns grid positions for each location (only main world locations)
+     * Group locations by their region
      */
-    getMapLayout() {
-        return {
-            // Top row - outer locations
-            'Mine': { row: 1, col: 1 },
-            'Lake': { row: 1, col: 2 },
-            'Forest': { row: 1, col: 3 },
+    groupLocationsByRegion() {
+        const grouped = {};
 
-            // Middle row - Town (center)
-            'Town': { row: 2, col: 2 },
+        Object.values(LOCATIONS).forEach(location => {
+            // Skip sub-locations (they have a parent)
+            if (location.parent) return;
 
-            // Bottom row - accessible from Forest
-            'Wilderness': { row: 3, col: 3 },
-        };
+            const regionId = location.region;
+            if (!grouped[regionId]) {
+                grouped[regionId] = [];
+            }
+            grouped[regionId].push(location);
+        });
+
+        return grouped;
     }
 
     /**
-     * Draw SVG lines connecting locations
+     * Create a region element with all its locations
      */
-    drawConnectionLines(svg, layout, connectedLocations, currentLocation) {
-        // Get all location node elements
-        const nodes = {};
-        Object.keys(layout).forEach(locationId => {
-            const element = document.querySelector(`[data-location="${locationId}"]`);
-            if (element) {
-                const rect = element.getBoundingClientRect();
-                const containerRect = svg.parentElement.getBoundingClientRect();
-                nodes[locationId] = {
-                    x: rect.left + rect.width / 2 - containerRect.left,
-                    y: rect.top + rect.height / 2 - containerRect.top
-                };
-            }
+    createRegionElement(region, locations, currentLocation, connectedLocations, isRelevant) {
+        const regionDiv = document.createElement('details');
+        regionDiv.className = 'map-region';
+        regionDiv.setAttribute('data-region', region.id);
+
+        // Open the region if it's relevant to current location
+        if (isRelevant) {
+            regionDiv.setAttribute('open', '');
+        }
+
+        // Apply region theme styling
+        regionDiv.style.borderLeftColor = region.theme.primary;
+
+        // Region header
+        const summary = document.createElement('summary');
+        summary.className = 'region-header';
+        summary.style.background = region.theme.gradient;
+        summary.innerHTML = `
+            <div class="region-header-content">
+                <div class="region-name">${region.name}</div>
+                <div class="region-tier">Tier ${region.tier} • Levels ${region.suggestedLevel}</div>
+            </div>
+        `;
+        regionDiv.appendChild(summary);
+
+        // Region description
+        const regionDesc = document.createElement('div');
+        regionDesc.className = 'region-description';
+        regionDesc.textContent = region.description;
+        regionDiv.appendChild(regionDesc);
+
+        // Locations grid
+        const locationsGrid = document.createElement('div');
+        locationsGrid.className = 'region-locations-grid';
+
+        locations.forEach(location => {
+            const isCurrent = location.id === currentLocation;
+            const isConnected = connectedLocations.includes(location.id);
+
+            const node = this.createLocationNode(location, isCurrent, isConnected);
+            locationsGrid.appendChild(node);
         });
 
-        // Define connections to draw
-        const connections = [
-            ['Town', 'Mine'],
-            ['Town', 'Lake'],
-            ['Town', 'Forest'],
-            ['Forest', 'Wilderness'],
-        ];
+        regionDiv.appendChild(locationsGrid);
 
-        // Draw lines
-        connections.forEach(([loc1, loc2]) => {
-            if (nodes[loc1] && nodes[loc2]) {
-                const isConnected = (
-                    (currentLocation === loc1 && connectedLocations.includes(loc2)) ||
-                    (currentLocation === loc2 && connectedLocations.includes(loc1))
-                );
-
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                line.setAttribute('x1', nodes[loc1].x);
-                line.setAttribute('y1', nodes[loc1].y);
-                line.setAttribute('x2', nodes[loc2].x);
-                line.setAttribute('y2', nodes[loc2].y);
-                line.setAttribute('stroke', isConnected ? '#3b82f6' : '#4b5563');
-                line.setAttribute('stroke-width', isConnected ? '3' : '2');
-                line.setAttribute('stroke-dasharray', isConnected ? '0' : '5,5');
-                line.setAttribute('opacity', isConnected ? '0.8' : '0.3');
-
-                svg.appendChild(line);
-            }
-        });
+        return regionDiv;
     }
 
     /**

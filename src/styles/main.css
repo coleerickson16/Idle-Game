@@ -160,62 +160,114 @@ details[open] summary:before {
     }
 }
 
-/* ==================== World Map Styles ==================== */
+/* ==================== World Map Styles - Region Based ==================== */
 
-/* Map title section */
-.map-title {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
+/* Map header with current location */
+.map-header {
+    padding: 1rem;
+    background-color: #1f2937;
+    border-radius: 0.5rem;
     margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid #4b5563;
+    text-align: center;
+    border: 2px solid #10b981;
 }
 
-/* Map visual container */
-.map-visual {
-    position: relative;
-    min-height: 200px;
+/* Region container */
+.map-region {
+    margin-bottom: 1rem;
+    background-color: #1f2937;
+    border-radius: 0.75rem;
+    border-left: 4px solid #4b5563;
+    overflow: hidden;
+    transition: all 0.3s ease;
 }
 
-/* Map nodes grid container */
-.map-nodes {
+.map-region[open] {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Region header/summary */
+.region-header {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.region-header::-webkit-details-marker {
+    display: none;
+}
+
+.region-header::before {
+    content: "▶";
+    display: inline-block;
+    margin-right: 0.5rem;
+    transition: transform 0.2s;
+}
+
+.map-region[open] .region-header::before {
+    content: "▼";
+}
+
+.region-header:hover {
+    filter: brightness(1.1);
+}
+
+.region-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.region-name {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.region-tier {
+    font-size: 0.75rem;
+    opacity: 0.9;
+}
+
+/* Region description */
+.region-description {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: #9ca3af;
+    font-style: italic;
+    border-bottom: 1px solid #374151;
+}
+
+/* Region locations grid */
+.region-locations-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, auto);
-    gap: 1rem;
-    margin-bottom: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.75rem;
     padding: 1rem;
 }
 
-/* Sub-locations container */
-.sub-locations {
-    margin-top: 0.75rem;
-    margin-bottom: 0.5rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    border-top: 1px solid #4b5563;
+/* Sub-locations panel */
+.sub-locations-panel {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #1f2937;
+    border-radius: 0.75rem;
+    border: 2px solid #fbbf24;
+}
+
+.sub-locations-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #fbbf24;
+    margin-bottom: 0.75rem;
 }
 
 .sub-locations-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 0.5rem;
-    margin-top: 0.5rem;
-}
-
-.sub-locations .map-node {
-    min-height: 50px;
-    padding: 0.5rem;
-}
-
-.sub-locations .map-node-emoji {
-    font-size: 1.25rem;
-}
-
-.sub-locations .map-node-name {
-    font-size: 0.7rem;
 }
 
 /* Base node styling */
