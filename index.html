@@ -25,7 +25,7 @@
                 <h2 class="text-xl font-bold border-b border-gray-600 pb-2 mb-3 text-white">Character</h2>
 
                 <!-- Action Buttons Grid -->
-                <div class="grid grid-cols-3 gap-2 mb-3">
+                <div class="grid grid-cols-4 gap-2 mb-3">
                     <button id="btn-show-skills" class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white py-2 px-2 rounded-lg font-semibold text-xs transition-all duration-200 shadow-md">
                         📊
                     </button>
@@ -34,6 +34,9 @@
                     </button>
                     <button id="btn-show-equipment" class="bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white py-2 px-2 rounded-lg font-semibold text-xs transition-all duration-200 shadow-md">
                         ⚔️
+                    </button>
+                    <button id="btn-show-collection" class="bg-yellow-600 hover:bg-yellow-700 active:bg-yellow-800 text-white py-2 px-2 rounded-lg font-semibold text-xs transition-all duration-200 shadow-md">
+                        📚
                     </button>
                 </div>
 
@@ -60,6 +63,13 @@
                         <h3 class="text-base font-bold mb-2 text-white">⚔️ Equipment</h3>
                         <div id="equipment-panel" class="equipment-grid-inline">
                             <!-- Equipment slots will be rendered here -->
+                        </div>
+                    </div>
+
+                    <!-- Collection Log Panel -->
+                    <div id="collection-panel-inline" class="character-panel hidden">
+                        <div id="collection-panel">
+                            <!-- Collection log will be rendered here -->
                         </div>
                     </div>
                 </div>

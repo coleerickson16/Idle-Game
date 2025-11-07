@@ -1076,3 +1076,105 @@ details[open] summary:before {
 .shop-btn-sell:hover:not(:disabled) {
     background-color: #d97706;
 }
+
+/* ==================== Collection Log Interface Styles ==================== */
+
+.collection-log-interface {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.collection-header {
+    padding: 1rem;
+    background-color: #1f2937;
+    border-radius: 0.5rem;
+    border: 2px solid #fbbf24;
+}
+
+.progress-bar-container {
+    width: 100%;
+    background-color: #374151;
+    border-radius: 9999px;
+    height: 0.75rem;
+    overflow: hidden;
+    margin-top: 0.5rem;
+    border: 1px solid #4b5563;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    border-radius: 9999px;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+}
+
+.collection-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.collection-category {
+    background-color: #1f2937;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    border: 1px solid #374151;
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.category-title {
+    display: flex;
+    align-items: center;
+}
+
+.category-stats {
+    font-size: 0.875rem;
+    color: #9ca3af;
+}
+
+.category-progress-bar {
+    width: 100%;
+    background-color: #374151;
+    border-radius: 9999px;
+    height: 0.5rem;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+}
+
+.category-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #059669);
+    border-radius: 9999px;
+    transition: width 0.5s ease;
+}
+
+.category-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 0.5rem;
+}
+
+.collection-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    background-color: #374151;
+    border-radius: 0.375rem;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.collection-item:hover {
+    background-color: #4b5563;
+    transform: translateY(-2px);
+}

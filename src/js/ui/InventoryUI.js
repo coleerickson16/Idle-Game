@@ -23,9 +23,24 @@ class InventoryUI {
         this.inventoryPanel.innerHTML = '';
 
         const items = inventorySystem.getNonEmptyItems();
+        const capacity = inventorySystem.getInventoryCapacity();
+
+        // Add capacity header
+        const header = document.createElement('div');
+        header.className = 'mb-2 pb-2 border-b border-gray-600';
+        header.innerHTML = `
+            <div class="text-sm font-semibold ${capacity.isFull ? 'text-red-400' : 'text-gray-300'}">
+                Inventory: ${capacity.used}/${capacity.max} item types
+            </div>
+            ${capacity.isFull ? '<div class="text-xs text-red-400 mt-1">⚠️ Inventory full! Store items in the bank.</div>' : ''}
+        `;
+        this.inventoryPanel.appendChild(header);
 
         if (items.length === 0) {
-            this.inventoryPanel.innerHTML = '<p class="text-gray-400 italic text-sm">Your backpack is empty. Start gathering!</p>';
+            const emptyMsg = document.createElement('p');
+            emptyMsg.className = 'text-gray-400 italic text-sm';
+            emptyMsg.textContent = 'Your backpack is empty. Start gathering!';
+            this.inventoryPanel.appendChild(emptyMsg);
             return;
         }
 

@@ -13,6 +13,7 @@ import { hotbarUI } from './HotbarUI.js';
 import { combatUI } from './CombatUI.js';
 import { bankUI } from './BankUI.js';
 import { merchantUI } from './MerchantUI.js';
+import { collectionLogUI } from './CollectionLogUI.js';
 import { locationSystem } from '../systems/LocationSystem.js';
 import { notificationSystem } from '../systems/NotificationSystem.js';
 import { gameState } from '../core/GameState.js';
@@ -27,6 +28,7 @@ class UIManager {
         skillsUI.initialize('skills-panel', 'activity-status');
         inventoryUI.initialize('inventory-panel');
         equipmentUI.initialize('equipment-panel');
+        collectionLogUI.init('collection-panel');
         actionsUI.initialize({
             woodcutting: 'woodcutting-actions',
             mining: 'mining-actions',
@@ -69,6 +71,7 @@ class UIManager {
 
         // Inventory events
         window.addEventListener('inventoryUpdated', () => this.handleInventoryUpdate());
+        window.addEventListener('inventoryError', (e) => this.handleInventoryError(e));
 
         // Equipment events
         window.addEventListener('itemEquipped', (e) => this.handleItemEquipped(e));
@@ -114,6 +117,9 @@ class UIManager {
         // Merchant events
         window.addEventListener('merchantTransaction', (e) => this.handleMerchantTransaction(e));
         window.addEventListener('merchantError', (e) => this.handleMerchantError(e));
+
+        // Collection log events
+        window.addEventListener('itemDiscovered', (e) => this.handleItemDiscovered(e));
     }
 
     setupModalListeners() {
@@ -121,14 +127,16 @@ class UIManager {
         const btnShowSkills = document.getElementById('btn-show-skills');
         const btnShowInventory = document.getElementById('btn-show-inventory');
         const btnShowEquipment = document.getElementById('btn-show-equipment');
+        const btnShowCollection = document.getElementById('btn-show-collection');
 
         const skillsPanel = document.getElementById('skills-panel-inline');
         const inventoryPanel = document.getElementById('inventory-panel-inline');
         const equipmentPanel = document.getElementById('equipment-panel-inline');
+        const collectionPanel = document.getElementById('collection-panel-inline');
 
         // Helper to show a specific panel and hide others
         const showPanel = (panelToShow) => {
-            [skillsPanel, inventoryPanel, equipmentPanel].forEach(panel => {
+            [skillsPanel, inventoryPanel, equipmentPanel, collectionPanel].forEach(panel => {
                 if (panel) {
                     panel.classList.add('hidden');
                 }
@@ -144,6 +152,8 @@ class UIManager {
                     inventoryUI.render();
                 } else if (panelToShow === equipmentPanel) {
                     equipmentUI.render();
+                } else if (panelToShow === collectionPanel) {
+                    collectionLogUI.render();
                 }
             }
         };
@@ -166,6 +176,13 @@ class UIManager {
         if (btnShowEquipment) {
             btnShowEquipment.addEventListener('click', () => {
                 showPanel(equipmentPanel);
+            });
+        }
+
+        // Collection button
+        if (btnShowCollection) {
+            btnShowCollection.addEventListener('click', () => {
+                showPanel(collectionPanel);
             });
         }
     }
@@ -195,6 +212,11 @@ class UIManager {
         if (combatUI.getCurrentEnemy()) {
             combatUI.render();
         }
+    }
+
+    handleInventoryError(e) {
+        const { message } = e.detail;
+        logUI.log(message, 'error');
     }
 
     handleItemEquipped(e) {
@@ -331,7 +353,7 @@ class UIManager {
     }
 
     handleCombatDefeat(e) {
-        const { enemy } = e.detail;
+        const { enemy, lostItems } = e.detail;
 
         // Get combat stats before hiding panel
         const stats = combatUI.getCombatStats();
@@ -339,6 +361,14 @@ class UIManager {
         const avgDamageTaken = stats.hitsTaken > 0 ? (stats.totalDamageTaken / stats.hitsTaken).toFixed(1) : 0;
 
         logUI.log(`💀 You have been defeated by the ${enemy.name}.`, 'error');
+
+        // Log lost items
+        if (lostItems && lostItems.length > 0) {
+            lostItems.forEach(({ name, count }) => {
+                logUI.log(`💔 You lost ${count}x ${name}!`, 'error');
+            });
+            logUI.log(`⚠️ Items in the bank are safe from death penalties.`, 'info');
+        }
 
         // Log combat summary
         logUI.log(`📊 Combat Summary: ${stats.totalDamageDealt} damage dealt (${avgDamageDealt} avg), ${stats.totalDamageTaken} taken (${avgDamageTaken} avg), ${stats.turnCount} turns`, 'info');
@@ -413,6 +443,16 @@ class UIManager {
     handleMerchantError(e) {
         const { message } = e.detail;
         logUI.log(message, 'error');
+    }
+
+    handleItemDiscovered(e) {
+        const { itemName, totalDiscovered, totalItems, percentage } = e.detail;
+        logUI.log(`📚 New discovery! ${itemName} added to collection log (${totalDiscovered}/${totalItems} - ${percentage}%)`, 'success');
+        // Update collection log UI if it's currently visible
+        const collectionPanel = document.getElementById('collection-panel-inline');
+        if (collectionPanel && !collectionPanel.classList.contains('hidden')) {
+            collectionLogUI.render();
+        }
     }
 
     /**

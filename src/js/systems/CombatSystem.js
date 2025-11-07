@@ -175,11 +175,61 @@ class CombatSystem {
      * Handle player defeat
      */
     handleDefeat(enemy) {
+        // Apply death penalty: lose 20% of inventory items randomly
+        const lostItems = this.applyDeathPenalty();
+
         // Restore health
         const maxHp = skillSystem.getMaxHealth();
         gameState.setCurrentHealth(maxHp);
 
-        this.dispatchDefeat(enemy);
+        this.dispatchDefeat(enemy, lostItems);
+    }
+
+    /**
+     * Apply death penalty - lose 20% of inventory items randomly
+     * Items in bank are safe
+     */
+    applyDeathPenalty() {
+        const inventory = inventorySystem.getNonEmptyItems();
+        const lostItems = [];
+
+        // Build array of all individual items (for random selection)
+        const allItems = [];
+        inventory.forEach(item => {
+            // Don't lose coins
+            if (item.name === 'Coins') return;
+
+            for (let i = 0; i < item.count; i++) {
+                allItems.push(item.name);
+            }
+        });
+
+        // Calculate 20% of total items (minimum 1 if they have items)
+        const itemsToLose = Math.max(0, Math.ceil(allItems.length * 0.2));
+
+        // Randomly select items to lose
+        for (let i = 0; i < itemsToLose; i++) {
+            if (allItems.length === 0) break;
+
+            const randomIndex = Math.floor(Math.random() * allItems.length);
+            const itemName = allItems[randomIndex];
+
+            // Remove item from inventory
+            inventorySystem.removeItem(itemName, 1);
+
+            // Track lost item
+            const existingLost = lostItems.find(lost => lost.name === itemName);
+            if (existingLost) {
+                existingLost.count++;
+            } else {
+                lostItems.push({ name: itemName, count: 1 });
+            }
+
+            // Remove from allItems array
+            allItems.splice(randomIndex, 1);
+        }
+
+        return lostItems;
     }
 
     // Event dispatching
@@ -201,9 +251,9 @@ class CombatSystem {
         }));
     }
 
-    dispatchDefeat(enemy) {
+    dispatchDefeat(enemy, lostItems = []) {
         window.dispatchEvent(new CustomEvent('combatDefeat', {
-            detail: { enemy }
+            detail: { enemy, lostItems }
         }));
     }
 }

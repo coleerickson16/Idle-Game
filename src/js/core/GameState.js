@@ -28,6 +28,7 @@ class GameState {
             equipment: this.initializeEquipment(),
             hotbar: this.initializeHotbar(),
             bank: this.initializeInventory(), // Bank uses same item structure as inventory
+            collectionLog: {}, // Tracks discovered items { itemName: true }
             currentActivity: {
                 name: 'Idle',
                 interval: null,
@@ -264,6 +265,19 @@ class GameState {
         if (this.player.bank[itemName] !== undefined) {
             this.player.bank[itemName] = Math.max(0, this.player.bank[itemName] - amount);
         }
+    }
+
+    // Collection Log methods
+    getCollectionLog() {
+        return this.player.collectionLog;
+    }
+
+    addToCollectionLog(itemName) {
+        this.player.collectionLog[itemName] = true;
+    }
+
+    hasInCollectionLog(itemName) {
+        return !!this.player.collectionLog[itemName];
     }
 }
 
