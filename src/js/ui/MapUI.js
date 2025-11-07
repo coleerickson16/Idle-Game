@@ -1,10 +1,13 @@
 /**
  * MapUI.js
  * Renders the visual world map with region-based organization
+ * Manages switching between world view and tile exploration view
  */
 
 import { locationSystem } from '../systems/LocationSystem.js';
 import { LOCATIONS, REGIONS } from '../data/GameData.js';
+import { tileMapSystem } from '../systems/TileMapSystem.js';
+import { tileMapUI } from './TileMapUI.js';
 
 class MapUI {
     constructor() {
@@ -17,15 +20,33 @@ class MapUI {
             console.error('World map container not found!');
             return;
         }
+
+        // Initialize tile map UI
+        tileMapUI.init('world-map'); // Uses same container
+
         this.render();
     }
 
     /**
-     * Render the world map with regions
+     * Render the world map with regions OR tile exploration view
      */
     render() {
         if (!this.mapContainer) return;
 
+        // If in tile exploration mode, render tile map instead
+        if (tileMapSystem.isInExploration()) {
+            tileMapUI.render();
+            return;
+        }
+
+        // Otherwise render world map
+        this.renderWorldMap();
+    }
+
+    /**
+     * Render the traditional world map with regions
+     */
+    renderWorldMap() {
         const currentLocation = locationSystem.getCurrentLocation();
         const currentLocationData = locationSystem.getCurrentLocationData();
         const connectedLocations = locationSystem.getConnectedLocations();
@@ -137,11 +158,25 @@ class MapUI {
         summary.style.background = region.theme.gradient;
         summary.innerHTML = `
             <div class="region-header-content">
-                <div class="region-name">${region.name}</div>
-                <div class="region-tier">Tier ${region.tier} • Levels ${region.suggestedLevel}</div>
+                <div class="region-info">
+                    <div class="region-name">${region.name}</div>
+                    <div class="region-tier">Tier ${region.tier} • Levels ${region.suggestedLevel}</div>
+                </div>
+                <button class="region-explore-btn" data-region="${region.id}">
+                    🗺️ Explore
+                </button>
             </div>
         `;
         regionDiv.appendChild(summary);
+
+        // Add click handler for explore button (prevent summary toggle)
+        const exploreBtn = summary.querySelector('.region-explore-btn');
+        if (exploreBtn) {
+            exploreBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Don't toggle the details
+                this.handleExploreRegion(region.id);
+            });
+        }
 
         // Region description
         const regionDesc = document.createElement('div');
@@ -209,6 +244,16 @@ class MapUI {
 
         if (canTravel.success) {
             locationSystem.travelTo(locationId);
+        }
+    }
+
+    /**
+     * Handle exploring a region (enter tile map mode)
+     */
+    handleExploreRegion(regionId) {
+        const success = tileMapSystem.enterRegion(regionId);
+        if (success) {
+            this.render(); // Re-render to show tile map
         }
     }
 }

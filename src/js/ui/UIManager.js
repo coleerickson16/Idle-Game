@@ -120,6 +120,14 @@ class UIManager {
 
         // Collection log events
         window.addEventListener('itemDiscovered', (e) => this.handleItemDiscovered(e));
+
+        // Tile map events
+        window.addEventListener('tileMapEntered', (e) => this.handleTileMapEntered(e));
+        window.addEventListener('tileMapExited', (e) => this.handleTileMapExited(e));
+        window.addEventListener('playerMoved', (e) => this.handlePlayerMoved(e));
+        window.addEventListener('regionTransition', (e) => this.handleRegionTransition(e));
+        window.addEventListener('resourceGathered', (e) => this.handleResourceGathered(e));
+        window.addEventListener('locationEntered', (e) => this.handleLocationEntered(e));
     }
 
     setupModalListeners() {
@@ -453,6 +461,44 @@ class UIManager {
         if (collectionPanel && !collectionPanel.classList.contains('hidden')) {
             collectionLogUI.render();
         }
+    }
+
+    // Tile map event handlers
+    handleTileMapEntered(e) {
+        const { regionId, regionName } = e.detail;
+        logUI.log(`🗺️ Entering ${regionName} exploration mode...`, 'info');
+        mapUI.render(); // Re-render to show tile map
+    }
+
+    handleTileMapExited(e) {
+        const { regionId, regionName } = e.detail;
+        logUI.log(`🌍 Returned to world map from ${regionName}`, 'info');
+        mapUI.render(); // Re-render to show world map
+    }
+
+    handlePlayerMoved(e) {
+        const { oldPosition, newPosition } = e.detail;
+        // Render tile map to update player position
+        mapUI.render();
+    }
+
+    handleRegionTransition(e) {
+        const { fromRegion, toRegion } = e.detail;
+        logUI.log(`🚪 Transitioning to ${toRegion}...`, 'info');
+        mapUI.render();
+    }
+
+    handleResourceGathered(e) {
+        const { resourceType, itemName } = e.detail;
+        // Resource gathering is already handled by activity system
+        // This is just to keep track of tile-based interactions
+    }
+
+    handleLocationEntered(e) {
+        const { locationId, locationName } = e.detail;
+        logUI.log(`🏛️ Entering ${locationName}...`, 'success');
+        // Actions UI will automatically update when location changes
+        actionsUI.render();
     }
 
     /**
