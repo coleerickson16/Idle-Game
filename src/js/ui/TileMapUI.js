@@ -238,8 +238,14 @@ class TileMapUI {
         if (!tileMapSystem.isInExploration()) return;
 
         let moved = false;
+        const key = event.key.toLowerCase();
 
-        switch(event.key.toLowerCase()) {
+        // Check if it's a movement key and prevent default browser behavior
+        if (['w', 's', 'a', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(key)) {
+            event.preventDefault(); // Prevent scroll/default behavior BEFORE processing
+        }
+
+        switch(key) {
             case 'w':
             case 'arrowup':
                 moved = tileMapSystem.move('up');
@@ -256,10 +262,6 @@ class TileMapUI {
             case 'arrowright':
                 moved = tileMapSystem.move('right');
                 break;
-        }
-
-        if (moved) {
-            event.preventDefault();
         }
     }
 }
